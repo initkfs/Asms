@@ -1,0 +1,497 @@
+     1                                  ; initkfs, 2018
+     2                                  ; Euclidean algorithm implementation
+     3                                  %include "./../lib/sys/sys_exit.inc"
+     4                              <1> %macro sys_exit 0-1 0 ;default return code: 0
+     5                              <1> 
+     6                              <1> %%SYS_EXIT  equ 60 ; sys_exit linux system call, linux 64 
+     7                              <1> 
+     8                              <1> mov rax, %%SYS_EXIT
+     9                              <1> mov rdi, %1 ;%rdi - exit code
+    10                              <1> syscall
+    11                              <1> 
+    12                              <1> %endmacro
+    13                                  %include "./../lib/sys/sys_readin.inc"
+    14                              <1> %macro sys_readin 2 ; 1 - buffer with result, 2 - buffer char size, buffer is variable
+    15                              <1> 
+    16                              <1> %%SYS_READ equ 0 ; linux sys_read, rax: 0, rdi: unsigned int fd, rsi: char *buf , rdx: size_t count
+    17                              <1> %%STDIN    equ 0 ; linux stdin, 0
+    18                              <1> 
+    19                              <1> push rax
+    20                              <1> push rdi
+    21                              <1> push rsi
+    22                              <1> push rdx
+    23                              <1> 
+    24                              <1> mov rax, %%SYS_READ
+    25                              <1> mov rdi, %%STDIN
+    26                              <1> mov rsi, %1 ; buffer
+    27                              <1> mov rdx, %2 ; buffer char size
+    28                              <1>   
+    29                              <1> syscall
+    30                              <1> 
+    31                              <1> pop rdx
+    32                              <1> pop rsi
+    33                              <1> pop rdi
+    34                              <1> pop rax
+    35                              <1> 
+    36                              <1> %endmacro
+    37                                  %include "./../lib/sys/sys_write.inc"
+    38                              <1> %macro sys_write 1-2 -1; 1 - target string, only chars not a number, 2 - string size
+    39                              <1> ; default -1, string length autocalculated
+    40                              <1> 
+    41                              <1> %ifnmacro str_length
+    42                              <1>     %error Error: not found 'str_length' macros for a string length calculation.
+    43                              <1> %endif
+    44                              <1> 
+    45                              <1> %%SYS_WRITE   equ 1 ; linux sys_write, 64bit
+    46                              <1> %%STDOUT      equ 1 ; stdout
+    47                              <1> %%STRING_END  equ 0 ; null-byte
+    48                              <1> 
+    49                              <1> push rax
+    50                              <1> push rdi
+    51                              <1> push rsi
+    52                              <1> push rdx
+    53                              <1> 
+    54                              <1> mov rsi, %1 ; target string
+    55                              <1> 
+    56                              <1> %if %2 > 0
+    57                              <1>     mov rdx, %2 ; string size from the parameter
+    58                              <1> %elif %2 = -1 
+    59                              <1>     str_length rsi ; calculate string size
+    60                              <1> 	mov rdx, rax   ; mov string size to the rdx
+    61                              <1> %else
+    62                              <1>     %error Error: incorrect string length received. Expected positive number.
+    63                              <1> %endif 
+    64                              <1> 
+    65                              <1> mov rax, %%SYS_WRITE
+    66                              <1> mov rdi, %%STDOUT
+    67                              <1> 
+    68                              <1> syscall
+    69                              <1> 
+    70                              <1> pop rdx
+    71                              <1> pop rsi
+    72                              <1> pop rdi
+    73                              <1> pop rax
+    74                              <1> 
+    75                              <1> %endmacro
+    76                                  %include "./../lib/string/str_printf.inc"
+    77                              <1> %macro str_printf 2 ; format, target string
+    78                              <1> 
+    79                              <1> extern	printf
+    80                              <1> 
+    81                              <1> ;d or i	Signed decimal integer
+    82                              <1> ;u	Unsigned decimal integer
+    83                              <1> ;o	Unsigned octal
+    84                              <1> ;x	Unsigned hexadecimal integer,	7fa
+    85                              <1> ;X	Unsigned hexadecimal integer (uppercase),	7FA
+    86                              <1> ;f	Decimal floating point, lowercase,	392.65
+    87                              <1> ;F	Decimal floating point, uppercase,	392.65
+    88                              <1> ;e	Scientific notation (mantissa/exponent), lowercase,	3.9265e+2
+    89                              <1> ;E	Scientific notation (mantissa/exponent), uppercase,	3.9265E+2
+    90                              <1> ;g	Use the shortest representation: %e or %f,	392.65
+    91                              <1> ;G	Use the shortest representation: %E or %F,	392.65
+    92                              <1> ;a	Hexadecimal floating point, lowercase,	-0xc.90fep-2
+    93                              <1> ;A	Hexadecimal floating point, uppercase,	-0XC.90FEP-2
+    94                              <1> ;c	Character,	a
+    95                              <1> ;s	String of characters,	sample
+    96                              <1> ;p	Pointer address,	b8000000
+    97                              <1> ;n	Nothing printed.
+    98                              <1> ;%	A % followed by another % character will write a single % to the stream.	%
+    99                              <1> 
+   100                              <1> ;Length & Description
+   101                              <1> ;l argument is interpreted as a long int or unsigned long int for integer specifiers (i, d, o, u, x and X), and as a wide character or wide character string for specifiers c and s.
+   102                              <1> ;h argument is interpreted as a short int or unsigned short int (only applies to integer specifiers: i, d, o, u, x and X).
+   103                              <1> ;L argument is interpreted as a long double (only applies to floating point specifiers: e, E, f, g and G).
+   104                              <1> 
+   105                              <1> push rdi
+   106                              <1> push rsi
+   107                              <1> push rax
+   108                              <1> 
+   109                              <1> enter 0,0
+   110                              <1> 
+   111                              <1> mov rdi, %1 ; string format to rdi
+   112                              <1> mov rsi, %2 ; target to rsi
+   113                              <1> xor rax,rax ; segfault without reset
+   114                              <1> call printf
+   115                              <1> 
+   116                              <1> leave
+   117                              <1> 
+   118                              <1> pop rax
+   119                              <1> pop rsi
+   120                              <1> pop rdi
+   121                              <1> 
+   122                              <1> %endmacro
+   123                                  %include "./../lib/num/num_from_string.inc"
+   124                              <1> %macro num_from_string 1 ; target string, result in rax
+   125                              <1> 
+   126                              <1> extern atoi
+   127                              <1> 
+   128                              <1> push rdi
+   129                              <1> 
+   130                              <1> mov rdi, %1
+   131                              <1> 
+   132                              <1> push rbp
+   133                              <1> mov rbp,rsp
+   134                              <1> call atoi
+   135                              <1> leave
+   136                              <1> 
+   137                              <1> pop rdi
+   138                              <1> 
+   139                              <1> %endmacro
+   140                                  %include "./../lib/string/str_length.inc"
+   141                              <1> %macro str_length 1 ; 1 - target string, result in rax
+   142                              <1> 
+   143                              <1> %%STRING_END  equ 0 ; null-byte, end of a string
+   144                              <1> 
+   145                              <1> push rdx
+   146                              <1> push rsi
+   147                              <1> push rcx
+   148                              <1> 
+   149                              <1> xor rdx, rdx
+   150                              <1> xor rcx, rcx    
+   151                              <1> 
+   152                              <1> mov rsi, %1 ; target string
+   153                              <1> 
+   154                              <1> %%length:
+   155                              <1>      mov dl, byte [rsi + rcx]
+   156                              <1>      cmp dl, %%STRING_END
+   157                              <1>      je %%result
+   158                              <1>      inc rcx
+   159                              <1>      jmp %%length
+   160                              <1> 
+   161                              <1> %%result:
+   162                              <1> mov rax, rcx
+   163                              <1> 
+   164                              <1> pop rcx
+   165                              <1> pop rsi
+   166                              <1> pop rdx
+   167                              <1> 
+   168                              <1> %endmacro
+   169                              <1> 
+   170                                  
+   171                                  section .data
+   172 00000000 4743443D256C640A00      resultFormat: db "GCD=%ld", 10, 0
+   173 00000009 4E756D626572206D75-     notPositive: db "Number must be positive", 10, 0
+   174 00000012 737420626520706F73-
+   175 0000001B 69746976650A00     
+   176 00000022 4E756D626572206361-     notEmpty: db "Number cannot be empty", 10, 0
+   177 0000002B 6E6E6F742062652065-
+   178 00000034 6D7074790A00       
+   179                                  
+   180                                  READ_CHAR_COUNT equ 10
+   181                                  
+   182                                  section .bss
+   183                                  ; buffers for readin
+   184 00000000 <res 00000008>          num1: resq 1
+   185 00000008 <res 00000008>          num2: resq 1
+   186                                  
+   187                                  section .text
+   188                                  
+   189                                  global main
+   190                                  
+   191                                  main:
+   192                                  
+   193                                  readFirst:  
+   194                                     sys_readin num1, READ_CHAR_COUNT
+   195                              <1> 
+   196                              <1> %%SYS_READ equ 0
+   197                              <1> %%STDIN equ 0
+   198                              <1> 
+   199 00000000 50                  <1> push rax
+   200 00000001 57                  <1> push rdi
+   201 00000002 56                  <1> push rsi
+   202 00000003 52                  <1> push rdx
+   203                              <1> 
+   204 00000004 B800000000          <1> mov rax, %%SYS_READ
+   205 00000009 BF00000000          <1> mov rdi, %%STDIN
+   206 0000000E 48BE-               <1> mov rsi, %1
+   207 00000010 [0000000000000000]  <1>
+   208 00000018 BA0A000000          <1> mov rdx, %2
+   209                              <1> 
+   210 0000001D 0F05                <1> syscall
+   211                              <1> 
+   212 0000001F 5A                  <1> pop rdx
+   213 00000020 5E                  <1> pop rsi
+   214 00000021 5F                  <1> pop rdi
+   215 00000022 58                  <1> pop rax
+   216                              <1> 
+   217 00000023 48BF-                      mov rdi, num1
+   218 00000025 [0000000000000000] 
+   219 0000002D E892000000                 call toNumber
+   220 00000032 48890425[00000000]         mov [num1], rax
+   221                                  
+   222                                  readSecond:   
+   223                                     sys_readin num2, READ_CHAR_COUNT
+   224                              <1> 
+   225                              <1> %%SYS_READ equ 0
+   226                              <1> %%STDIN equ 0
+   227                              <1> 
+   228 0000003A 50                  <1> push rax
+   229 0000003B 57                  <1> push rdi
+   230 0000003C 56                  <1> push rsi
+   231 0000003D 52                  <1> push rdx
+   232                              <1> 
+   233 0000003E B800000000          <1> mov rax, %%SYS_READ
+   234 00000043 BF00000000          <1> mov rdi, %%STDIN
+   235 00000048 48BE-               <1> mov rsi, %1
+   236 0000004A [0800000000000000]  <1>
+   237 00000052 BA0A000000          <1> mov rdx, %2
+   238                              <1> 
+   239 00000057 0F05                <1> syscall
+   240                              <1> 
+   241 00000059 5A                  <1> pop rdx
+   242 0000005A 5E                  <1> pop rsi
+   243 0000005B 5F                  <1> pop rdi
+   244 0000005C 58                  <1> pop rax
+   245                              <1> 
+   246 0000005D 48BF-                      mov rdi, num2
+   247 0000005F [0800000000000000] 
+   248 00000067 E858000000                 call toNumber
+   249 0000006C 48890425[08000000]         mov [num2], rax
+   250                                  
+   251                                  leftGreater:
+   252 00000074 488B0425[00000000]          mov rax, [num1]
+   253 0000007C 488B0C25[08000000]          mov rcx, [num2]
+   254 00000084 4839C8                      cmp rax, rcx
+   255 00000087 7C02                        jl rightGreater  
+   256 00000089 EB02                        jmp while   
+   257                                      
+   258                                  rightGreater:
+   259 0000008B 4891                        xchg rax, rcx ; swap registers
+   260                                  
+   261                                  ; now a (rax) = larger number, b (rcx) = smaller number
+   262                                  while:
+   263 0000008D 4831D2                      xor rdx, rdx	; prevent error from div
+   264 00000090 48F7F1                      div rcx			; rax - result, rcx - remainder
+   265 00000093 4889C8                      mov rax, rcx	; a = b
+   266 00000096 4889D1                      mov rcx, rdx	; b = remainder
+   267                                     
+   268 00000099 4883F900                    cmp rcx, 0		; while(b != 0)
+   269 0000009D 75EE                        jne while		; 
+   270                                   
+   271                                  result:   
+   272                                      str_printf resultFormat, rax
+   273                              <1> 
+   274                              <1> extern printf
+   275                              <1> 
+   276                              <1> 
+   277                              <1> 
+   278                              <1> 
+   279                              <1> 
+   280                              <1> 
+   281                              <1> 
+   282                              <1> 
+   283                              <1> 
+   284                              <1> 
+   285                              <1> 
+   286                              <1> 
+   287                              <1> 
+   288                              <1> 
+   289                              <1> 
+   290                              <1> 
+   291                              <1> 
+   292                              <1> 
+   293                              <1> 
+   294                              <1> 
+   295                              <1> 
+   296                              <1> 
+   297                              <1> 
+   298                              <1> 
+   299                              <1> 
+   300 0000009F 57                  <1> push rdi
+   301 000000A0 56                  <1> push rsi
+   302 000000A1 50                  <1> push rax
+   303                              <1> 
+   304 000000A2 C8000000            <1> enter 0,0
+   305                              <1> 
+   306 000000A6 48BF-               <1> mov rdi, %1
+   307 000000A8 [0000000000000000]  <1>
+   308 000000B0 4889C6              <1> mov rsi, %2
+   309 000000B3 4831C0              <1> xor rax,rax
+   310 000000B6 E8(00000000)        <1> call printf
+   311                              <1> 
+   312 000000BB C9                  <1> leave
+   313                              <1> 
+   314 000000BC 58                  <1> pop rax
+   315 000000BD 5E                  <1> pop rsi
+   316 000000BE 5F                  <1> pop rdi
+   317                              <1> 
+   318 000000BF E9B3000000                  jmp end
+   319                                  
+   320                                  toNumber:
+   321 000000C4 803F0A                     cmp byte [rdi], 10 ; check value is not empty
+   322 000000C7 754C                       jne .convertNumber
+   323                                     sys_write notEmpty
+   324                              <1> 
+   325                              <1> 
+   326                              <1> %ifnmacro str_length
+   327                              <1>  %error Error: not found 'str_length' macros for a string length calculation.
+   328                              <1> %endif
+   329                              <1> 
+   330                              <1> %%SYS_WRITE equ 1
+   331                              <1> %%STDOUT equ 1
+   332                              <1> %%STRING_END equ 0
+   333                              <1> 
+   334 000000C9 50                  <1> push rax
+   335 000000CA 57                  <1> push rdi
+   336 000000CB 56                  <1> push rsi
+   337 000000CC 52                  <1> push rdx
+   338                              <1> 
+   339 000000CD 48BE-               <1> mov rsi, %1
+   340 000000CF [2200000000000000]  <1>
+   341                              <1> 
+   342                              <1> %if %2 > 0
+   343                              <1>  mov rdx, %2
+   344                              <1> %elif %2 = -1
+   345                              <1>  str_length rsi
+   346                              <2> 
+   347                              <2> %%STRING_END equ 0
+   348                              <2> 
+   349 000000D7 52                  <2> push rdx
+   350 000000D8 56                  <2> push rsi
+   351 000000D9 51                  <2> push rcx
+   352                              <2> 
+   353 000000DA 4831D2              <2> xor rdx, rdx
+   354 000000DD 4831C9              <2> xor rcx, rcx
+   355                              <2> 
+   356 000000E0 4889F6              <2> mov rsi, %1
+   357                              <2> 
+   358                              <2> %%length:
+   359 000000E3 8A140E              <2>  mov dl, byte [rsi + rcx]
+   360 000000E6 80FA00              <2>  cmp dl, %%STRING_END
+   361 000000E9 7405                <2>  je %%result
+   362 000000EB 48FFC1              <2>  inc rcx
+   363 000000EE EBF3                <2>  jmp %%length
+   364                              <2> 
+   365                              <2> %%result:
+   366 000000F0 4889C8              <2> mov rax, rcx
+   367                              <2> 
+   368 000000F3 59                  <2> pop rcx
+   369 000000F4 5E                  <2> pop rsi
+   370 000000F5 5A                  <2> pop rdx
+   371                              <2> 
+   372 000000F6 4889C2              <1>  mov rdx, rax
+   373                              <1> %else
+   374                              <1>  %error Error: incorrect string length received. Expected positive number.
+   375                              <1> %endif
+   376                              <1> 
+   377 000000F9 B801000000          <1> mov rax, %%SYS_WRITE
+   378 000000FE BF01000000          <1> mov rdi, %%STDOUT
+   379                              <1> 
+   380 00000103 0F05                <1> syscall
+   381                              <1> 
+   382 00000105 5A                  <1> pop rdx
+   383 00000106 5E                  <1> pop rsi
+   384 00000107 5F                  <1> pop rdi
+   385 00000108 58                  <1> pop rax
+   386                              <1> 
+   387                                     sys_exit 1
+   388                              <1> 
+   389                              <1> %%SYS_EXIT equ 60
+   390                              <1> 
+   391 00000109 B83C000000          <1> mov rax, %%SYS_EXIT
+   392 0000010E BF01000000          <1> mov rdi, %1
+   393 00000113 0F05                <1> syscall
+   394                              <1> 
+   395                                     
+   396                                  .convertNumber:
+   397                                     num_from_string rdi
+   398                              <1> 
+   399                              <1> extern atoi
+   400                              <1> 
+   401 00000115 57                  <1> push rdi
+   402                              <1> 
+   403 00000116 4889FF              <1> mov rdi, %1
+   404                              <1> 
+   405 00000119 55                  <1> push rbp
+   406 0000011A 4889E5              <1> mov rbp,rsp
+   407 0000011D E8(00000000)        <1> call atoi
+   408 00000122 C9                  <1> leave
+   409                              <1> 
+   410 00000123 5F                  <1> pop rdi
+   411                              <1> 
+   412 00000124 4883F800                   cmp rax, 0 ; check value is larger then zero
+   413 00000128 7F4C                       jg .returnNumber
+   414                                     sys_write notPositive
+   415                              <1> 
+   416                              <1> 
+   417                              <1> %ifnmacro str_length
+   418                              <1>  %error Error: not found 'str_length' macros for a string length calculation.
+   419                              <1> %endif
+   420                              <1> 
+   421                              <1> %%SYS_WRITE equ 1
+   422                              <1> %%STDOUT equ 1
+   423                              <1> %%STRING_END equ 0
+   424                              <1> 
+   425 0000012A 50                  <1> push rax
+   426 0000012B 57                  <1> push rdi
+   427 0000012C 56                  <1> push rsi
+   428 0000012D 52                  <1> push rdx
+   429                              <1> 
+   430 0000012E 48BE-               <1> mov rsi, %1
+   431 00000130 [0900000000000000]  <1>
+   432                              <1> 
+   433                              <1> %if %2 > 0
+   434                              <1>  mov rdx, %2
+   435                              <1> %elif %2 = -1
+   436                              <1>  str_length rsi
+   437                              <2> 
+   438                              <2> %%STRING_END equ 0
+   439                              <2> 
+   440 00000138 52                  <2> push rdx
+   441 00000139 56                  <2> push rsi
+   442 0000013A 51                  <2> push rcx
+   443                              <2> 
+   444 0000013B 4831D2              <2> xor rdx, rdx
+   445 0000013E 4831C9              <2> xor rcx, rcx
+   446                              <2> 
+   447 00000141 4889F6              <2> mov rsi, %1
+   448                              <2> 
+   449                              <2> %%length:
+   450 00000144 8A140E              <2>  mov dl, byte [rsi + rcx]
+   451 00000147 80FA00              <2>  cmp dl, %%STRING_END
+   452 0000014A 7405                <2>  je %%result
+   453 0000014C 48FFC1              <2>  inc rcx
+   454 0000014F EBF3                <2>  jmp %%length
+   455                              <2> 
+   456                              <2> %%result:
+   457 00000151 4889C8              <2> mov rax, rcx
+   458                              <2> 
+   459 00000154 59                  <2> pop rcx
+   460 00000155 5E                  <2> pop rsi
+   461 00000156 5A                  <2> pop rdx
+   462                              <2> 
+   463 00000157 4889C2              <1>  mov rdx, rax
+   464                              <1> %else
+   465                              <1>  %error Error: incorrect string length received. Expected positive number.
+   466                              <1> %endif
+   467                              <1> 
+   468 0000015A B801000000          <1> mov rax, %%SYS_WRITE
+   469 0000015F BF01000000          <1> mov rdi, %%STDOUT
+   470                              <1> 
+   471 00000164 0F05                <1> syscall
+   472                              <1> 
+   473 00000166 5A                  <1> pop rdx
+   474 00000167 5E                  <1> pop rsi
+   475 00000168 5F                  <1> pop rdi
+   476 00000169 58                  <1> pop rax
+   477                              <1> 
+   478                                     sys_exit 1
+   479                              <1> 
+   480                              <1> %%SYS_EXIT equ 60
+   481                              <1> 
+   482 0000016A B83C000000          <1> mov rax, %%SYS_EXIT
+   483 0000016F BF01000000          <1> mov rdi, %1
+   484 00000174 0F05                <1> syscall
+   485                              <1> 
+   486                                  .returnNumber:
+   487 00000176 C3                         ret
+   488                                  
+   489                                  end:
+   490                                  sys_exit
+   491                              <1> 
+   492                              <1> %%SYS_EXIT equ 60
+   493                              <1> 
+   494 00000177 B83C000000          <1> mov rax, %%SYS_EXIT
+   495 0000017C BF00000000          <1> mov rdi, %1
+   496 00000181 0F05                <1> syscall
+   497                              <1> 

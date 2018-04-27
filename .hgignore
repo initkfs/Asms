@@ -1,0 +1,4 @@
+^build
+^build_qemu.sh
+^build.sh
+^app\.[asm|list]
