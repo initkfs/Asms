@@ -34,8 +34,8 @@ push rax
 
 enter 0,0
 
-mov rdi, %1 ; string format to rdi
-mov rsi, %2 ; target to rsi
+mov rdi, %1 ; string format to rdi, pass VALUE, not a address
+mov rsi, %2 ; target to rsi,  pass VALUE, not a address
 xor rax,rax ; segfault without reset
 call printf
 
