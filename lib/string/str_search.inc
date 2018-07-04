@@ -1,59 +1,63 @@
+;----------------------------------------------
 ; initkfs, 2018
-; ---------------------
-; 1 - target string, 2 - searched, rax: index or -1 if searched not found
-%macro str_search 2
+; procedure "str_search"
+; Params: 1 - memory address of string, RDI. 2 - memory address of pattern, RSI
+; Result: RAX, index of pattern, or -1 if pattern not found
+;----------------------------------------------
+global str_search
 
-%ifnmacro str_length
-    %error Error: not found 'str_length' macros.
-%endif
-
-section .data
-
-section .bss
-	%%targetString: resq 1
-	%%pattern: resq 1
-	%%stringSize: resq 1
-	%%patternSize: resq 1
-    
-section .text
-
-strSearch:
-
-	push rbx
+str_search:
+	.start:
+	
 	push rcx
-	push rdi
+	push rbx
+	push r8
+	
+	; rdi - string address
+	; rsi - pattern address
+	enter 16, 0 ; two counter 8 byte x 2
+	
+	call str_length
+	mov [rbp - 16], rax ; string length counter
+	
+	xchg rdi, rsi
+	
+	call str_length
+	mov [rbp - 8], rax ; pattern counter
+	
+	xchg rdi, rsi
 
-	mov qword [%%targetString], %1
-	mov qword [%%pattern], %2
-		
-	str_length [%%targetString]
-	mov [%%stringSize], rax
-	
-	str_length [%%pattern]
-	mov [%%patternSize], rax
-	
+.strSearch:
 	xor rcx, rcx
 
 .iterateString:
-	mov rax, [%%patternSize + rcx]
-	cmp rax, [%%stringSize]
+
+	xor rax, rax
+	add rax, [rbp - 8] ; pattern size
+	add rax, rcx
+
+	cmp rax, [rbp - 16] ; compare pattern size + counter with string size
 	jg .patternNotFound
 	
+	xor rax, rax
 	xor rbx, rbx
 
 .searchPattern:
-	
-	movzx rax, byte [%1 + rbx + rcx] ; get one character from string
-	movzx rdi, byte [%2 + rbx]
 
-	cmp rax, rdi
+	; TODO remove r8
+	xor r8, r8
+	add r8, rbx
+	add r8, rcx
+
+	mov al, byte [rdi + r8] ; char from string
+	cmp al, byte [rsi + rbx] ; compare with char from pattern
 	jne .innerLoopAgain
 	
-	cmp rcx, [%%stringSize]	; prevent last null byte detection
+	cmp rcx, [rbp - 16]	; compare with string size, prevent last null byte detection
 	jge .patternNotFound 	
 
 	inc rbx
-	cmp rbx, [%%patternSize]
+	cmp rbx, [rbp - 8] ; compare with pattern size
 	jge .patternFound
 	
 	jmp .searchPattern
@@ -67,13 +71,18 @@ strSearch:
 	jmp .end
 	
 .patternNotFound:
-	mov rax, 1
-	neg rax
+	mov rax, -1
 	
 .end:
-	pop rdi
-	pop rcx
+	leave
+	
+	pop r8
 	pop rbx
+	pop rcx
+	
+	ret
+;----------------------------------------------
+;			procedure "str_search" end
+;----------------------------------------------
 
-%endmacro
 

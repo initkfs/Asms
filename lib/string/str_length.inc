@@ -1,31 +1,42 @@
+;----------------------------------------------
 ; initkfs, 2018
-; ---------------------
-%macro str_length 1 ; 1 - target string, result in rax
+; procedure "str_length"
+; Params: 1 - memory address of string, RDI.
+;----------------------------------------------
+global str_length
 
-%%STRING_END  equ 0 ; null-byte, end of a string
-
-push rdx
-push rsi
-push rcx
-
-xor rdx, rdx
-xor rcx, rcx    
-
-mov rsi, %1 ; target string
-
-%%length:
-     mov dl, byte [rsi + rcx]
-     cmp dl, %%STRING_END
-     je %%result
+str_length:
+	.start:
+	
+	push rcx
+	
+	enter 0, 0
+	
+	cmp rdi, 0
+	je .notfound
+	
+	xor rax, rax
+	xor rcx, rcx
+	
+.length:
+     mov al, byte [rdi + rcx]
+     cmp al, 0 ; null-byte
+     je .result
      inc rcx
-     jmp %%length
+     
+     jmp .length
 
-%%result:
-mov rax, rcx
+.result:
+	mov rax, rcx
+	jmp .end
+	
+.notfound:
+	mov rax, -1
 
-pop rcx
-pop rsi
-pop rdx
-
-%endmacro
-
+.end:
+	leave
+	pop rcx
+	ret
+;----------------------------------------------
+;			procedure "str_length" end
+;----------------------------------------------
