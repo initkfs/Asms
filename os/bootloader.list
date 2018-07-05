@@ -1,0 +1,74 @@
+     1                                  bits 16
+     2                                  ORG 0x7c00
+     3                                  ; initkfs, 2018
+     4                                  ; ---------------------
+     5                                  ;https://stackoverflow.com/questions/39534327/bootloader-not-loading-second-sector
+     6                                  ;https://stackoverflow.com/questions/19935688/how-to-transfer-the-control-from-my-boot-loader-to-the-application-located-in-ha
+     7                                  ;https://habr.com/company/neobit/blog/203706/
+     8                                  ;https://en.wikipedia.org/wiki/INT_13H
+     9 00000000 31C0                    	xor ax, ax
+    10 00000002 8ED8                    	mov ds, ax
+    11                                  	
+    12 00000004 8ED0                        mov ss, ax
+    13 00000006 BC007C                      mov sp, 0x7c00
+    14                                  
+    15                                  resetFloppy:
+    16 00000009 31C0                        xor ax,ax
+    17 0000000B CD13                        int 0x13
+    18 0000000D 72FA                        jc resetFloppy
+    19                                  
+    20 0000000F B8E007                      mov ax, 0x07e0
+    21 00000012 8EC0                        mov es,ax 
+    22 00000014 31DB                        xor bx,bx
+    23                                  
+    24                                  readfloppy:
+    25                                  	;TODO LBA mov ah, 0x42 ; set to lba extended read
+    26 00000016 B402                    	mov ah,0x2        ; 2 = Read floppy
+    27 00000018 B001                    	mov al,0x1        ; Reading one sector
+    28 0000001A B500                    	mov ch,0x0        ; Track(Cylinder) 1
+    29 0000001C B102                    	mov cl,0x2        ; Sector 2
+    30 0000001E B600                    	mov dh,0x0        ; Head 1
+    31 00000020 CD13                        int 0x13
+    32 00000022 7233                        jc printFloppyError 
+    33                                      
+    34 00000024 EA0000E007                  jmp 0x07e0:0x0000
+    35                                      
+    36                                     
+    37 00000029 466C6F707079206C6F-     	msgErrorLoadFloppy db 'Floppy load LBA error! ', 0 
+    38 00000032 6164204C4241206572-
+    39 0000003B 726F72212000       
+    40 00000041 4F532063616E206E6F-     	msgErrorLoadOS db 'OS can not be loaded ', 0
+    41 0000004A 74206265206C6F6164-
+    42 00000053 65642000           
+    43                                  
+    44                                  printFloppyError:
+    45 00000057 BE[2900]                	mov si, msgErrorLoadFloppy
+    46 0000005A E80200                  	call printString
+    47 0000005D EB0C                    	jmp end
+    48                                  
+    49                                  printString:	; mov si, msq
+    50 0000005F B40E                    	mov ah, 0Eh	; int 10h 'print char' BIOS function
+    51                                  
+    52                                  .parseChar:
+    53 00000061 AC                      	lodsb			; Get character from string
+    54 00000062 3C00                    	cmp al, 0
+    55 00000064 7404                    	je .done
+    56 00000066 CD10                    	int 10h	
+    57 00000068 EBF7                    	jmp .parseChar
+    58                                  
+    59                                  .done:
+    60 0000006A C3                      	ret
+    61                                  	
+    62                                  ;dap:
+    63                                  ;db 0x10   ; size of this package
+    64                                  ;db 0x0    ; reserved
+    65                                  ;dw 0x1   ; number of sectors to load
+    66                                  ;dd 0x07e0 ; destination address
+    67                                  ;dq 0x1   ; sector index to load
+    68                                  
+    69                                  end:
+    70 0000006B BE[4100]                	mov si, msgErrorLoadOS
+    71 0000006E E8EEFF                  	call printString
+    72                                  
+    73 00000071 00<rept>                times 510 - ($ - $$) db 0   ; Fill the rest of sector with 0
+    74 000001FE 55AA                    dw 0xAA55                   ; This is the boot signature
