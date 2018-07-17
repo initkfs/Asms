@@ -10,8 +10,6 @@ str_length:
 	
 	push rcx
 	
-	enter 0, 0
-	
 	cmp rdi, 0
 	je .notfound
 	
@@ -34,7 +32,6 @@ str_length:
 	mov rax, -1
 
 .end:
-	leave
 	pop rcx
 	ret
 ;----------------------------------------------
