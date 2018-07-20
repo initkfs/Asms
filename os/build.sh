@@ -22,7 +22,7 @@ loaderName=bootloader
 loaderBinFile=$objectDir/${loaderName}.bin
 # -g Option: Enabling Debug Information.
 nasm -g -f bin -l "${loaderName}.list" -o "$loaderBinFile" "$__dir/${loaderName}.asm"
-if [[ ! $? == 0 ]]; then
+if [[ $? -ne 0 ]]; then
 echo "Error. Compile bootloader failed. Exit"
 exit 1
 fi
@@ -34,7 +34,7 @@ dd if="$loaderBinFile" of="$osImage" conv=notrunc
 kernelName=kernel
 kernelFile=$objectDir/$kernelName
 nasm -g -f bin -l "${kernelName}.list" -o "$kernelFile" "$__dir/${kernelName}.asm"
-if [[ ! $? == 0 ]]; then
+if [[ $? -ne 0 ]]; then
 echo "Error. Compile kernel failed. Exit"
 exit 1
 fi
