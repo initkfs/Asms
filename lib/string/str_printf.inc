@@ -1,6 +1,9 @@
 ; initkfs, 2018
 ; ---------------------
-%macro str_printf 2 ; format, target string
+%macro str_printf 2-3 0 ; RDI - format, RSI - target, 1 - is_float
+
+;https://stackoverflow.com/questions/6212665/why-is-eax-zeroed-before-a-call-to-printf/6212835#6212835
+;https://stackoverflow.com/questions/20594800/printf-float-in-nasm-assembly-64-bit
 
 extern	printf
 
@@ -32,14 +35,17 @@ push rdi
 push rsi
 push rax
 
-enter 0,0
-
 mov rdi, %1 ; string format to rdi, pass VALUE, not a address
 mov rsi, %2 ; target to rsi,  pass VALUE, not a address
-xor rax,rax ; segfault without reset
-call printf
 
-leave
+%if %3 = 1
+	mov rax, 1 ; fix float point printing
+	movq xmm0, qword rsi
+%else
+	xor rax,rax ; segfault without reset 
+%endif 
+
+call printf
 
 pop rax
 pop rsi
