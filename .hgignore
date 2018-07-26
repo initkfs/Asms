@@ -3,3 +3,4 @@
 ^build.sh
 ^app\.[asm|list]
 ^app\.[dis|ds]
+^gdb.list
