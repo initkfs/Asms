@@ -1,5 +1,0 @@
-# info registers, info all-registers, info registers regname
-set confirm off
-b gbreak
-run
-p  $eflags
