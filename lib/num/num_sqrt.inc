@@ -1,25 +1,23 @@
 ;----------------------------------------------
 ; initkfs, 2018
-; procedure "math_cos"
-; RAX - radians
+; procedure "num_sqrt"
+; RDI - source number
 ; Result in RAX
+; TODO check negative
 ;----------------------------------------------
-global math_sin
+global num_sqrt
 
-math_cos:
+num_sqrt:
 
-	enter 16, 0
-	mov [rbp - 8], rax
-	
-	finit
-	fld qword [rbp - 8]
-
-	fcos
-	fst qword [rbp - 16]
-	mov rax, qword [rbp - 16]
+	push rdi
+    fild qword [rsp]
+    fsqrt
+    fisttp qword [rsp]
+    mov rax, [rsp]  
+    pop rdi
+ 
 .end:
-	leave
 	ret
 ;----------------------------------------------
-;			procedure "math_cos" end
+;			procedure "num_sqrt" end
 ;----------------------------------------------

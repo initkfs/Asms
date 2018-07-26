@@ -1,12 +1,12 @@
 ;----------------------------------------------
 ; initkfs, 2018
-; procedure "math_sin"
+; procedure "num_sin"
 ; RAX - radians
 ; Result in RAX
 ;----------------------------------------------
-global math_sin
+global num_sin
 
-math_sin:
+num_sin:
 
 	enter 16, 0
 	mov [rbp - 8], rax
@@ -30,5 +30,5 @@ math_sin:
 	leave
 	ret
 ;----------------------------------------------
-;			procedure "math_sin" end
+;			procedure "num_sin" end
 ;----------------------------------------------
