@@ -31,6 +31,11 @@ extern	printf
 ;h argument is interpreted as a short int or unsigned short int (only applies to integer specifiers: i, d, o, u, x and X).
 ;L argument is interpreted as a long double (only applies to floating point specifiers: e, E, f, g and G).
 
+
+; TODO. Float point:
+; num1: dq 175.5
+; str_printf resultFormat, [num1], 1
+
 push rdi
 push rsi
 push rax
