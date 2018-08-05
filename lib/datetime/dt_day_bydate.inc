@@ -1,6 +1,7 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "dt_day_bydate"
+; RDI: Year, RSI: Month, RDX: Day
 ; Result in RAX: day, starts with 0 - Sunday, or error -1
 ; https://en.wikipedia.org/wiki/Determination_of_the_day_of_the_week
 ; Schwerdtfeger's method
