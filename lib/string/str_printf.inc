@@ -39,6 +39,7 @@ extern	printf
 push rdi
 push rsi
 push rax
+push rcx
 
 mov rdi, %1 ; string format to rdi, pass VALUE, not a address
 mov rsi, %2 ; target to rsi,  pass VALUE, not a address
@@ -52,6 +53,7 @@ mov rsi, %2 ; target to rsi,  pass VALUE, not a address
 
 call printf
 
+pop rcx
 pop rax
 pop rsi
 pop rdi

@@ -11,6 +11,7 @@ push rax
 push rdi
 push rsi
 push rdx
+push rcx
 
 mov rsi, %1 ; target string
 
@@ -29,6 +30,7 @@ mov rdi, %%STDOUT
 
 syscall
 
+pop rcx
 pop rdx
 pop rsi
 pop rdi
