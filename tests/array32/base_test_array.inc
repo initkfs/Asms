@@ -5,6 +5,7 @@
 %include "tests/base_test.inc"
 
 section .data
+; don't move, use as array
 array1element: dq 8
 array2element: dq 6
 array3element: dq 3

@@ -1,8 +1,6 @@
 ; initkfs, 2018
 ; ---------------------
-%include "lib/sys/sys_exit.inc"
 %include "lib/array32/array_utils.inc"
-
 
 ; include last
 %include "tests/array32/base_test_array.inc"
@@ -55,33 +53,71 @@ testArraySet:
 	mov rdx, [array1element]
 	call array_set
 	
-	xor rax, rax
-	call array_size
-	cmp rax, 1
+	call array_get
+	mov rdx, [array1element]
+	cmp rax, [array1element]
+	jne .fail
+	
+	mov rsi, 1
+	mov rdx, [array2element]
+	call array_set
+	
+	call array_get
+	mov rdx, [array2element]
+	cmp rax, [array2element]
 	jne .fail
 
-	jmp testArrayGet
+	jmp testArrayCorrectSize
 .fail:
-	mov rdx, 1
 	call assertNumeric
 	mov rdi, __LINE__
 	mov rsi, file
 	call printFailInfo
 
-testArrayGet:
+testArrayCorrectSize:
 
 	mov rdi, dataArray
-	mov rsi, 0 ; index
 	
-	xor rax, rax
+	call array_size
+	cmp rax, 2
+	jne .fail
+	
+	jmp testArrayPush
+.fail:
+	mov rdx, 2
+	call assertNumeric
+	mov rdi, __LINE__
+	mov rsi, file
+	call printFailInfo
+	
+	
+testArrayPush:
+
+	mov rdi, dataArray
+	
+	mov rsi, [array3element]
+	call array_push
+	mov rsi, [array4element]
+	call array_push
+	mov rsi, [array5element]
+	call array_push
+	
+	mov rcx, 0
+.iterate:
+
+	mov rsi, rcx
 	call array_get
 	
-	cmp rax, [array1element]
+	mov rdx, [array1element + rcx * 8]
+	cmp rax, rdx
 	jne .fail
+	
+	inc rcx
+	cmp rcx, [arrayElementsCount]
+	jl .iterate
 
 	jmp testSuccess
 .fail:
-	mov rdx, [array1element]
 	call assertNumeric
 	mov rdi, __LINE__
 	mov rsi, file

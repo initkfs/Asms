@@ -1,5 +1,6 @@
 ; initkfs, 2018
 ; ---------------------
+%include "lib/sys/sys_exit.inc"
 
 section .data
 exitFormat: db "ERROR_CODE: %d", 10, 0
@@ -27,12 +28,14 @@ printInfo:
 	push rsi
 	push rax
 	push rdx
+	push rcx
 	
 	mov rsi, rax
 	xor rax, rax ; prevent segfault
 	call printf
 
 .end:
+	pop rcx
 	pop rdx
 	pop rax
 	pop rsi
@@ -43,6 +46,7 @@ global printNum
 printNum:
 
 	push rdi
+	
 	mov rdi, numFormat
 	call printInfo
 .end: 

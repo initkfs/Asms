@@ -1,3 +1,4 @@
+; ERROR_ID=40
 ;----------------------------------------------
 ; array_init
 ;  
@@ -18,15 +19,15 @@ array_init:
 	ret
 	
 ;----------------------------------------------
-; array_size_offset
+; _array_size_offset
 ;  
 ; initkfs, 2018
 ; RDI: array address
-; Return RAX: 32bit array element counter memory pointer
+; Return RAX: 32bit array counter memory pointer
 ;----------------------------------------------
-global array_size_offset
+global _array_size_offset
 
-array_size_offset:
+_array_size_offset:
 
 	lea rax, [rdi]; set counter
 	cmp dword [rax], 0
@@ -50,7 +51,7 @@ global array_size
 
 array_size:
 
-	call array_size_offset
+	call _array_size_offset
 	cmp rax, -1
 	je .error
 	
@@ -63,15 +64,15 @@ array_size:
 	ret
 
 ;----------------------------------------------
-; array_data_boundary_offset
+; _array_data_boundary_offset
 ;  
 ; initkfs, 2018
 ; RDI: array address
 ; Return RAX: array memory address at which the array values begin
 ;----------------------------------------------
-global array_data_boundary_offset
+global _array_data_boundary_offset
 
-array_data_boundary_offset:
+_array_data_boundary_offset:
 
 	lea rax, [rdi + 4] ; rdi + 4byte counter
 	
@@ -85,9 +86,9 @@ array_data_boundary_offset:
 ; RDI: array address, RSI: element index
 ; Return RAX: array memory address of the array element
 ;----------------------------------------------
-global array_get_offset
+global _array_element_offset
 
-array_get_offset:
+_array_element_offset:
 
 	push rcx
 	push rdx
@@ -104,14 +105,11 @@ array_get_offset:
 	
 	mov rcx, rax
 
-	call array_data_boundary_offset
+	call _array_data_boundary_offset
 	cmp rax, -1
 	je .error
 	
-	mov rdx, rcx
-	dec rdx ; size - 1
-	
-	lea rax, [rax + rdx * 4] ; data offset + elements count * element size, where 4 for dword
+	lea rax, [rax + rsi * 4] ; data offset + elements index * element size, where 4 for dword
 	jmp .end
 
 .error: 
@@ -132,16 +130,14 @@ global array_get
 
 array_get:
 
-	push rcx
-
 	cmp rsi, 0
 	jl .error
 
-	call array_get_offset
+	call _array_element_offset
 	cmp rax, -1
 	je .error
 	
-	mov rax, [rax]
+	mov eax, [rax]
 	
 	jmp .end
 	
@@ -149,7 +145,6 @@ array_get:
 	mov rax, -1
 	
 .end:
-	pop rcx
 	ret
 	
 ;----------------------------------------------
@@ -163,32 +158,47 @@ global array_set
 array_set:
 
 	push rcx
+	push rdx
+	push rsi
 
 	cmp rsi, 0
 	jl .error
 	
 	call array_size
-	cmp rax, 0 ; if rax == -1 && size == 0
+	cmp rax, 0
 	jl .error
 	
 	mov rcx, rax
 	
 	cmp rcx, 0
 	je .writeToEmptyArray
+	
+	cmp rsi, rcx
+	je .writeNewElement
+	jg .error
 
-	call array_get_offset
+	call _array_element_offset
 	cmp rax, -1
 	je .error
 	
 	mov [rax], edx
 	jmp .updateCounter
 	
+.writeNewElement:
+
+	mov rsi, rcx
+	dec rsi
+	call _array_element_offset ; get last value
+	lea rax, [rax + 4]
+	mov [rax], edx
+	jmp .updateCounter
+	
 .writeToEmptyArray:
-	call array_data_boundary_offset
+	call _array_data_boundary_offset
 	mov [rax], edx
 
 .updateCounter:
-	call array_size_offset
+	call _array_size_offset
 	mov ecx, [rax]
 	inc ecx
 	mov [rax], ecx ; update counter
@@ -198,6 +208,8 @@ array_set:
 	mov rax, -1
 	
 .end:
+	pop rsi
+	pop rdx
 	pop rcx
 	ret
 
@@ -212,32 +224,17 @@ global array_push
 
 array_push:
 
-	push rcx
 	push rsi
 	push rdi
+	push rdx
 
 	call array_size
 	cmp rax, -1
 	je .error
 	
-	mov rcx, rax ; save array size
-	
-	cmp rcx, 0
-	je .pushToEmpty
-	
-	dec rcx ; get last index
-	
 	mov rdx, rsi
-	mov rsi, rcx
-	call array_set
-	
-	
-	jmp .end
-	
-.pushToEmpty:
+	mov rsi, rax
 
-	mov rdx, rsi
-	mov rsi, 0
 	call array_set
 	cmp rax, -1
 	je .error
@@ -248,7 +245,7 @@ array_push:
 	mov rax, -1
 	
 .end:
+	pop rdx
 	pop rdi
 	pop rsi
-	pop rcx
 	ret
