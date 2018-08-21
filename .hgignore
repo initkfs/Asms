@@ -6,3 +6,4 @@
 ^gdb.list
 ^tests/build/
 ^tests.sh
+^err.sh

@@ -1,39 +1,50 @@
+; errno=200
 ; initkfs, 2018
+; 
+; Print string to stdout
+; RDI: string memory address, RSI: number of characters to print, or 0 for full string
 ; ---------------------
-%macro sys_write 1-2 -1; 1 - target string, only chars not a number, 2 - string size
-; default -1, string length autocalculated
+global sys_write:
 
-%%SYS_WRITE   equ 1 ; linux sys_write, 64bit
-%%STDOUT      equ 1 ; stdout
-%%STRING_END  equ 0 ; null-byte
+sys_write:
 
-push rax
-push rdi
-push rsi
-push rdx
-push rcx
+	push rdx
 
-mov rsi, %1 ; target string
+	mov rdx, rsi  ; save string size
 
-%if %2 > 0
-    mov rdx, %2 ; string size from the parameter
-%elif %2 = -1 
-	mov rdi, rsi
-    call str_length ; calculate string size
-	mov rdx, rax   ; mov string size to the rdx
-%else
-    %error Error: incorrect string length received. Expected positive number.
-%endif 
+	cmp rdx, 0
+	jl .errStringSizeNegative
+	
+	call str_length
+	cmp rax, 0
+	jl .end
+	
+	cmp rdx, rax
+	jg .errStringSizeGreater
+	
+	cmp rdx, 0
+	jg .print
+	
+	mov rdx, rax
+	
+.print:
 
-mov rax, %%SYS_WRITE
-mov rdi, %%STDOUT
+	mov rax, 1 ; sys_write 
+	mov rsi, rdi ; const char *buf
+	mov rdi, 1 ; unsigned int fd; 1 - stdout
+	
+	syscall
+	jmp .end
+	
+.errStringSizeNegative:
+	mov rax, -201
+	jmp .end
 
-syscall
+.errStringSizeGreater:
+	mov rax, -202
+	jmp .end
 
-pop rcx
-pop rdx
-pop rsi
-pop rdi
-pop rax
-
-%endmacro
+.end:
+	pop rdx
+	mov rax, 0
+	ret

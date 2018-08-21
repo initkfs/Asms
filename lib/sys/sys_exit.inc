@@ -1,14 +1,30 @@
-;----------------------------------------------
-; sys_exit
-;  
+; errno=100
 ; initkfs, 2018
-; RDI: exis code
+;  
+; System exit
+; RDI: positive number, exit code
 ;----------------------------------------------
 global sys_exit
 
 sys_exit:
+	cmp rdi, 0
+	jl .errReturnCodeNegative
+	
+	cmp rdi, 255
+	jg .errReturnCodeTooLarge
+	
+	jmp .exit
 
-	mov rax, 60  ; sys_exit linux system call, linux 64 
+.errReturnCodeNegative:
+	mov rdi, 101 ; error code, 0 <= code <=255
+	jmp .exit
+	
+.errReturnCodeTooLarge:
+	mov rdi, 102
+
+.exit:
+
+	mov rax, 60  ; sys_exit linux system call 
 	syscall
 	
 .end:
