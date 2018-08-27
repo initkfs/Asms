@@ -23,7 +23,7 @@ sys_exit:
 	mov rdi, 102
 
 .exit:
-
+	mov rdx, rdi
 	mov rax, 60  ; sys_exit linux system call 
 	syscall
 	

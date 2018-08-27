@@ -8,43 +8,43 @@ global sys_write:
 
 sys_write:
 
-	push rdx
+	push r8
 
-	mov rdx, rsi  ; save string size
+	mov r8, rsi  ; save string size
 
-	cmp rdx, 0
+	cmp r8, 0
 	jl .errStringSizeNegative
 	
 	call str_length
-	cmp rax, 0
-	jl .end
+	cmp rdx, 0
+	jne .end
 	
-	cmp rdx, rax
+	cmp r8, rax
 	jg .errStringSizeGreater
 	
-	cmp rdx, 0
+	cmp r8, 0
 	jg .print
 	
-	mov rdx, rax
+	mov r8, rax
 	
 .print:
-
+	mov rdx, r8 ; string size
 	mov rax, 1 ; sys_write 
 	mov rsi, rdi ; const char *buf
 	mov rdi, 1 ; unsigned int fd; 1 - stdout
 	
 	syscall
+	
+	mov rdx, 0
 	jmp .end
 	
 .errStringSizeNegative:
-	mov rax, -201
+	mov rdx, 201
 	jmp .end
 
 .errStringSizeGreater:
-	mov rax, -202
-	jmp .end
+	mov rdx, 202
 
 .end:
-	pop rdx
-	mov rax, 0
+	pop r8
 	ret

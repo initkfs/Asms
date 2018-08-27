@@ -1,25 +1,35 @@
+; errno=300
 ; initkfs, 2018
+; 
+; RDI: char *buf, RSI: size_t count
 ; ---------------------
-%macro sys_readin 2 ; 1 - buffer with result, 2 - buffer char size, buffer is variable
+global sys_readin:
 
-%%SYS_READ equ 0 ; linux sys_read, rax: 0, rdi: unsigned int fd, rsi: char *buf , rdx: size_t count
-%%STDIN    equ 0 ; linux stdin, 0
+sys_readin:
 
-push rax
-push rdi
-push rsi
-push rdx
+	push rax
+	push rdi
+	push rsi
+	
+	cmp rsi, 0
+	jle .errSizeIsZeroOrNegative
 
-mov rax, %%SYS_READ
-mov rdi, %%STDIN
-mov rsi, %1 ; buffer
-mov rdx, %2 ; buffer char size
+	;sys_read, rax: 0, rdi: unsigned int fd, rsi: char *buf , rdx: size_t count
+	mov rdx, rsi ; buffer char size
+	mov rsi, rdi ; char *buf
+	mov rax, 0 ; sys_read
+	mov rdi, 0 ; stdin
   
-syscall
+	syscall
+	mov rdx, 0
+	jmp .end
+	
+.errSizeIsZeroOrNegative:
+	mov rdx, 301
 
-pop rdx
-pop rsi
-pop rdi
-pop rax
+.end:
+	pop rsi
+	pop rdi
+	pop rax
+	ret
 
-%endmacro
