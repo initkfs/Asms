@@ -1,17 +1,14 @@
+; errno=550
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_length"
-; Params: 1 - memory address of string, RDI.
+; RDI: 1 - memory address of string.
 ;----------------------------------------------
 global str_length
 
 str_length:
-	.start:
 	
 	push rcx
-	
-	cmp rdi, 0
-	je .notfound
 	
 	xor rax, rax
 	xor rcx, rcx
@@ -20,20 +17,15 @@ str_length:
      mov al, byte [rdi + rcx]
      cmp al, 0 ; null-byte
      je .result
-     inc rcx
      
+     inc rcx
      jmp .length
 
 .result:
 	mov rax, rcx
+	mov rdx, 0
 	jmp .end
-	
-.notfound:
-	mov rax, -1
 
 .end:
 	pop rcx
 	ret
-;----------------------------------------------
-;			procedure "str_length" end
-;----------------------------------------------
