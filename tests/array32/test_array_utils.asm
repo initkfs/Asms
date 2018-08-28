@@ -18,8 +18,8 @@ testArrayInit:
 	mov rdi, dataArray
 	
 	call array_init
-	cmp rax, 0
-	jl .fail
+	cmp rdx, 0
+	jne .fail
 	
 	jmp testArrayEmptySize
 	
@@ -27,7 +27,6 @@ testArrayInit:
 	mov rdi, __LINE__
 	mov rsi, file
 	call printFailInfo
-
 
 testArrayEmptySize:
 
@@ -40,7 +39,7 @@ testArrayEmptySize:
 	jmp testArraySet
 	
 .fail:
-	mov rdx, 0
+	mov r8, 0
 	call assertNumeric
 	mov rdi, __LINE__
 	mov rsi, file
@@ -54,7 +53,7 @@ testArraySet:
 	call array_set
 	
 	call array_get
-	mov rdx, [array1element]
+	mov r8, [array1element]
 	cmp rax, [array1element]
 	jne .fail
 	
@@ -63,7 +62,7 @@ testArraySet:
 	call array_set
 	
 	call array_get
-	mov rdx, [array2element]
+	mov r8, [array2element]
 	cmp rax, [array2element]
 	jne .fail
 
@@ -84,7 +83,7 @@ testArrayCorrectSize:
 	
 	jmp testArrayPush
 .fail:
-	mov rdx, 2
+	mov r8, 2
 	call assertNumeric
 	mov rdi, __LINE__
 	mov rsi, file
@@ -108,27 +107,18 @@ testArrayPush:
 	mov rsi, rcx
 	call array_get
 	
-	mov rdx, [array1element + rcx * 8]
-	cmp rax, rdx
+	mov r8, [array1element + rcx * 8]
+	cmp rax, r8
 	jne .fail
 	
 	inc rcx
 	cmp rcx, [arrayElementsCount]
 	jl .iterate
 
-	jmp testSuccess
+	 call testSuccess
 .fail:
 	call assertNumeric
 	mov rdi, __LINE__
 	mov rsi, file
 	call printFailInfo
 
-; ---------------------
-; ---------------------
-testFailed:
-	mov rdi, -1
-	call sys_exit
-
-testSuccess:
-	mov rdi, 0
-	call sys_exit

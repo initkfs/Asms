@@ -1,12 +1,12 @@
+;----------------------------------------------
 ; initkfs, 2018
-; ---------------------
-%macro str_printf 2-3 0 ; RDI - format, RSI - target, 1 - is_float
+; procedure "str_printf"
+; RDI - memory address of string format, RSI - target value, RDX - 1 is a float value
+;----------------------------------------------
+global str_printf
 
 ;https://stackoverflow.com/questions/6212665/why-is-eax-zeroed-before-a-call-to-printf/6212835#6212835
 ;https://stackoverflow.com/questions/20594800/printf-float-in-nasm-assembly-64-bit
-
-extern	printf
-
 ;d or i	Signed decimal integer
 ;u	Unsigned decimal integer
 ;o	Unsigned octal
@@ -25,37 +25,54 @@ extern	printf
 ;p	Pointer address,	b8000000
 ;n	Nothing printed.
 ;%	A % followed by another % character will write a single % to the stream.	%
-
 ;Length & Description
 ;l argument is interpreted as a long int or unsigned long int for integer specifiers (i, d, o, u, x and X), and as a wide character or wide character string for specifiers c and s.
 ;h argument is interpreted as a short int or unsigned short int (only applies to integer specifiers: i, d, o, u, x and X).
 ;L argument is interpreted as a long double (only applies to floating point specifiers: e, E, f, g and G).
 
+extern	printf
 
-; TODO. Float point:
-; num1: dq 175.5
-; str_printf resultFormat, [num1], 1
+str_printf:
+	;push rdx - error code
+	push rax
+	push rcx
+	push rsi
+	push rdi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
 
-push rdi
-push rsi
-push rax
-push rcx
-
-mov rdi, %1 ; string format to rdi, pass VALUE, not a address
-mov rsi, %2 ; target to rsi,  pass VALUE, not a address
-
-%if %3 = 1
-	mov rax, 1 ; fix float point printing
-	movq xmm0, qword rsi
-%else
+	cmp rdx, 1
+	je .printFloat
+	
 	xor rax,rax ; segfault without reset 
-%endif 
+	jmp .call
+	
+.printFloat:
+	mov rax, 1
+	movq xmm0, qword rsi
+	
+.call:
+	call printf
+	mov rdx, 0
 
-call printf
-
-pop rcx
-pop rax
-pop rsi
-pop rdi
-
-%endmacro
+.end:
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rdi    
+	pop rsi        
+	pop rcx
+	pop rax
+	;pop rdx
+	ret

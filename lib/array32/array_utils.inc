@@ -1,4 +1,4 @@
-; ERROR_ID=40
+; errno=400
 ;----------------------------------------------
 ; array_init
 ;  
@@ -14,7 +14,7 @@ array_init:
 
 	mov dword [rdi], 0 ; set array counter
 	
-	mov rax, 0
+	mov rdx, 0
 .end:
 	ret
 	
@@ -31,12 +31,14 @@ _array_size_offset:
 
 	lea rax, [rdi]; set counter
 	cmp dword [rax], 0
-	jl .error
+	jl .errOffsetLessZero
 	
+	mov rdx, 0
 	jmp .end
-.error: 
-	mov rax, -1
-	
+
+.errOffsetLessZero: 
+	mov rdx, 401
+
 .end:
 	ret
 
@@ -52,13 +54,11 @@ global array_size
 array_size:
 
 	call _array_size_offset
-	cmp rax, -1
-	je .error
+	cmp rdx, 0
+	jne .end
 	
 	mov eax, [rax]
-	jmp .end
-.error: 
-	mov rax, -1
+	mov rdx, 0
 	
 .end:
 	ret
@@ -75,7 +75,7 @@ global _array_data_boundary_offset
 _array_data_boundary_offset:
 
 	lea rax, [rdi + 4] ; rdi + 4byte counter
-	
+	mov rdx, 0
 .end:
 	ret
 	
@@ -91,32 +91,43 @@ global _array_element_offset
 _array_element_offset:
 
 	push rcx
-	push rdx
 	
 	cmp rsi, 0
-	jl .error
+	jl .errArrayIndexLessZero
 
 	call array_size
-	cmp rax, 0 ; if rax == -1 && size == 0
-	jle .error
+	cmp rdx, 0 ; if rax == -1 && size == 0
+	jne .end
+	
+	cmp rax, 0
+	jle .errArraySizeZeroOrLess
 	
 	cmp rsi, rax ; compare index and size
-	jge .error ; index >= size
+	jge .errArrayIndexGreaterThanSize ; index >= size
 	
 	mov rcx, rax
 
 	call _array_data_boundary_offset
-	cmp rax, -1
-	je .error
+	cmp rdx, 0
+	jne .end
 	
 	lea rax, [rax + rsi * 4] ; data offset + elements index * element size, where 4 for dword
+	mov rdx, 0
 	jmp .end
-
-.error: 
-	mov rax, -1
+	
+.errArrayIndexLessZero:
+	mov rdx, 410
+	jmp .end
+	
+.errArraySizeZeroOrLess:
+	mov rdx, 411
+	jmp .end
+	
+.errArrayIndexGreaterThanSize:
+	mov rdx, 412
+	jmp .end
 	
 .end:
-	pop rdx
 	pop rcx
 	ret
 	
@@ -131,18 +142,18 @@ global array_get
 array_get:
 
 	cmp rsi, 0
-	jl .error
+	jl .arrayIndexLessZero
 
 	call _array_element_offset
-	cmp rax, -1
-	je .error
+	cmp rdx, 0
+	jne .end
 	
 	mov eax, [rax]
-	
+	mov rdx, 0
 	jmp .end
-	
-.error: 
-	mov rax, -1
+
+.arrayIndexLessZero:
+	mov rdx, 420
 	
 .end:
 	ret
@@ -158,15 +169,17 @@ global array_set
 array_set:
 
 	push rcx
-	push rdx
 	push rsi
+	push r8
+	
+	mov r8, rdx ; save new element
 
 	cmp rsi, 0
-	jl .error
+	jl .errArrayIndexLessZero
 	
 	call array_size
-	cmp rax, 0
-	jl .error
+	cmp rdx, 0
+	jne .end
 	
 	mov rcx, rax
 	
@@ -175,13 +188,13 @@ array_set:
 	
 	cmp rsi, rcx
 	je .writeNewElement
-	jg .error
+	jg .errArrayIndexGreaterSizePerOne
 
 	call _array_element_offset
-	cmp rax, -1
-	je .error
+	cmp rdx, 0
+	jne .end
 	
-	mov [rax], edx
+	mov [rax], r8d
 	jmp .updateCounter
 	
 .writeNewElement:
@@ -189,27 +202,40 @@ array_set:
 	mov rsi, rcx
 	dec rsi
 	call _array_element_offset ; get last value
+	cmp rdx, 0
+	jne .end
+	
 	lea rax, [rax + 4]
-	mov [rax], edx
+	mov [rax], r8d
 	jmp .updateCounter
 	
 .writeToEmptyArray:
 	call _array_data_boundary_offset
-	mov [rax], edx
+	mov [rax], r8d
 
 .updateCounter:
 	call _array_size_offset
+	cmp rdx, 0
+	jne .end
+	
 	mov ecx, [rax]
 	inc ecx
 	mov [rax], ecx ; update counter
 	
+	mov rdx, 0
 	jmp .end
-.error: 
-	mov rax, -1
+	
+.errArrayIndexLessZero:
+	mov rdx, 430
+	jmp .end
+
+.errArrayIndexGreaterSizePerOne:
+	mov rdx, 431
+	jmp .end
 	
 .end:
+	pop r8
 	pop rsi
-	pop rdx
 	pop rcx
 	ret
 
@@ -226,26 +252,21 @@ array_push:
 
 	push rsi
 	push rdi
-	push rdx
 
 	call array_size
-	cmp rax, -1
-	je .error
+	cmp rdx, 0
+	jne .end
 	
 	mov rdx, rsi
 	mov rsi, rax
 
 	call array_set
-	cmp rax, -1
-	je .error
+	cmp rdx, 0
+	jne .end
 	
-	jmp .end
-	
-.error: 
-	mov rax, -1
+	mov rdx, 0
 	
 .end:
-	pop rdx
 	pop rdi
 	pop rsi
 	ret

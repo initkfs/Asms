@@ -1,17 +1,16 @@
 ; initkfs, 2018
 ; ---------------------
 %include "lib/sys/sys_exit.inc"
+%include "lib/string/str_printf.inc"
 
 section .data
 exitFormat: db "ERROR_CODE: %d", 10, 0
 lineFormat: db "LINE: %d", 10, 0
-fileFormat: db "Failed: %s", 10, 0
+fileFormat: db "File: %s", 10, 0
 
 numFormat: db "number=%d", 10, 0
 
 actualNumFormat: db "Actual: %d, expected: %d", 10, 0
-
-extern printf
 
 section .data
 file1: dq __FILE__
@@ -22,31 +21,19 @@ global printInfo
 
 ; RAX - value , RDI - format
 printInfo:
-	
-	;side effect, save all
-	push rdi
 	push rsi
-	push rax
-	push rdx
-	push rcx
-	
-	mov rsi, rax
-	xor rax, rax ; prevent segfault
-	call printf
 
+	mov rsi, rax
+	;xor rdx, rdx ; second argument
+	call str_printf
 .end:
-	pop rcx
-	pop rdx
-	pop rax
 	pop rsi
-	pop rdi
 	ret
 	
 global printNum
 printNum:
 
 	push rdi
-	
 	mov rdi, numFormat
 	call printInfo
 .end: 
@@ -54,19 +41,21 @@ printNum:
 	ret
 
 global printFailInfo
-; RAX - exit code, rdi - line, rsi - file path
+; RDX - exit code, RDI - line, RSI - file path
 printFailInfo:
 
-	push rdx
 	push rdi
 	push rsi
+	push r8
+	push rax
 	
-	mov rdx, rdi ; save line
+	mov r8, rdi ; save line
 	
+	mov rax, rdx
 	mov rdi, exitFormat
 	call printInfo
 
-	mov rax, rdx
+	mov rax, r8
 	mov rdi, lineFormat
 	call printInfo
 	
@@ -74,32 +63,46 @@ printFailInfo:
 	mov rdi, fileFormat
 	call printInfo
 .end:
+	pop rax
+	pop r8
 	pop rsi
 	pop rdi
-	pop rdx
 	ret
 
 
 global assertNumeric
-; RAX - actual, RDX - expected
+; RAX - actual, R8 - expected
 assertNumeric:
 	push rax
-	push rdx
 	push rdi
+	push rdx
 	
-	cmp rax, rdx
+	cmp rax, r8
 	jne .assertFailed
 	
 	jmp .end
 
 .assertFailed:
+	mov rdx, r8
 	mov rdi, actualNumFormat
 	call printInfo
 
 .end:
-	pop rdi
 	pop rdx
+	pop rdi
 	pop rax
+	ret
+
+global testFailed
+testFailed:
+	mov rdi, -1
+	call sys_exit
+	ret
+
+global testSuccess
+testSuccess:
+	mov rdi, 0
+	call sys_exit
 	ret
 
 
