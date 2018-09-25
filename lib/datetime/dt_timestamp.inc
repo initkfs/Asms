@@ -12,7 +12,8 @@ dt_timestamp:
 	mov     rax, 201         ; system call sys_time
     xor     rdi, rdi
     syscall 
-    	
+    
+    xor rdx, rdx
 .end:
 	pop rdi
 	ret

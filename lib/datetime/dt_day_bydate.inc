@@ -19,19 +19,19 @@ dt_day_bydate:
 	;rcx - day
 	
 	;check year
-	cmp rdi, 0
+	test rdi, rdi
 	jle .error
 	cmp rdi, 2100
 	jg .error
 	
 	;check month
-	cmp rsi, 0
+	test rsi, rsi
 	jle .error
 	cmp rsi, 12
 	jg .error
 	
 	;check day
-	cmp rcx, 0
+	test rcx, rcx
 	jle .error
 	cmp rcx, 31
 	jg .error
@@ -113,7 +113,7 @@ dt_day_bydate:
 	jmp .error
 
 .setF0:
-	mov r12, 0
+	xor r12, r12
 	jmp .calculateDay
 .setF5:
 	mov r12, 5
@@ -144,6 +144,7 @@ dt_day_bydate:
 	div r14
 	mov rax, rdx
 	
+	xor rdx, rdx
 	jmp .end
 
 .error: 
