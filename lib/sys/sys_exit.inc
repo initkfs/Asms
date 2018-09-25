@@ -7,7 +7,7 @@
 global sys_exit
 
 sys_exit:
-	cmp rdi, 0
+	test rdi, rdi
 	jl .errReturnCodeNegative
 	
 	cmp rdi, 255

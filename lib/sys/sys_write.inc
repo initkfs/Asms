@@ -3,6 +3,7 @@
 ; 
 ; Print string to stdout
 ; RDI: string memory address, RSI: number of characters to print, or 0 for full string
+; Calls: str_length
 ; ---------------------
 global sys_write:
 
@@ -12,17 +13,17 @@ sys_write:
 
 	mov r8, rsi  ; save string size
 
-	cmp r8, 0
+	test r8, r8
 	jl .errStringSizeNegative
 	
 	call str_length
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
 	cmp r8, rax
 	jg .errStringSizeGreater
 	
-	cmp r8, 0
+	test r8, r8
 	jg .print
 	
 	mov r8, rax
@@ -35,7 +36,7 @@ sys_write:
 	
 	syscall
 	
-	mov rdx, 0
+	xor rdx, rdx
 	jmp .end
 	
 .errStringSizeNegative:

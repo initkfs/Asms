@@ -11,17 +11,17 @@ sys_readin:
 	push rdi
 	push rsi
 	
-	cmp rsi, 0
+	test rsi, rsi
 	jle .errSizeIsZeroOrNegative
 
-	;sys_read, rax: 0, rdi: unsigned int fd, rsi: char *buf , rdx: size_t count
+	;sys_read: rax == 0, rdi: unsigned int fd, rsi: char *buf , rdx: size_t count
 	mov rdx, rsi ; buffer char size
 	mov rsi, rdi ; char *buf
-	mov rax, 0 ; sys_read
-	mov rdi, 0 ; stdin
+	xor rax, rax ; rax == 0: sys_read
+	xor rdi, rdi ; rdi == 0: stdin
   
 	syscall
-	mov rdx, 0
+	xor rdx, rdx
 	jmp .end
 	
 .errSizeIsZeroOrNegative:
