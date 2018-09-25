@@ -14,7 +14,7 @@ array_init:
 
 	mov dword [rdi], 0 ; set array counter
 	
-	mov rdx, 0
+	xor rdx, rdx
 .end:
 	ret
 	
@@ -33,7 +33,7 @@ _array_size_offset:
 	cmp dword [rax], 0
 	jl .errOffsetLessZero
 	
-	mov rdx, 0
+	xor rdx, rdx
 	jmp .end
 
 .errOffsetLessZero: 
@@ -54,11 +54,11 @@ global array_size
 array_size:
 
 	call _array_size_offset
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
 	mov eax, [rax]
-	mov rdx, 0
+	xor rdx, rdx
 	
 .end:
 	ret
@@ -75,7 +75,7 @@ global _array_data_boundary_offset
 _array_data_boundary_offset:
 
 	lea rax, [rdi + 4] ; rdi + 4byte counter
-	mov rdx, 0
+	xor rdx, rdx
 .end:
 	ret
 	
@@ -92,14 +92,14 @@ _array_element_offset:
 
 	push rcx
 	
-	cmp rsi, 0
+	test rsi, rsi
 	jl .errArrayIndexLessZero
 
 	call array_size
-	cmp rdx, 0 ; if rax == -1 && size == 0
+	test rdx, rdx ; if rax == -1 && size == 0
 	jne .end
 	
-	cmp rax, 0
+	test rax, rax
 	jle .errArraySizeZeroOrLess
 	
 	cmp rsi, rax ; compare index and size
@@ -108,11 +108,12 @@ _array_element_offset:
 	mov rcx, rax
 
 	call _array_data_boundary_offset
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
 	lea rax, [rax + rsi * 4] ; data offset + elements index * element size, where 4 for dword
-	mov rdx, 0
+	
+	xor rdx, rdx
 	jmp .end
 	
 .errArrayIndexLessZero:
@@ -141,15 +142,16 @@ global array_get
 
 array_get:
 
-	cmp rsi, 0
+	test rsi, rsi
 	jl .arrayIndexLessZero
 
 	call _array_element_offset
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
 	mov eax, [rax]
-	mov rdx, 0
+	
+	xor rdx, rdx
 	jmp .end
 
 .arrayIndexLessZero:
@@ -174,16 +176,16 @@ array_set:
 	
 	mov r8, rdx ; save new element
 
-	cmp rsi, 0
+	test rsi, rsi
 	jl .errArrayIndexLessZero
 	
 	call array_size
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
 	mov rcx, rax
 	
-	cmp rcx, 0
+	test rcx, rcx
 	je .writeToEmptyArray
 	
 	cmp rsi, rcx
@@ -191,7 +193,7 @@ array_set:
 	jg .errArrayIndexGreaterSizePerOne
 
 	call _array_element_offset
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
 	mov [rax], r8d
@@ -202,7 +204,7 @@ array_set:
 	mov rsi, rcx
 	dec rsi
 	call _array_element_offset ; get last value
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
 	lea rax, [rax + 4]
@@ -211,18 +213,20 @@ array_set:
 	
 .writeToEmptyArray:
 	call _array_data_boundary_offset
+	test rdx, rdx
+	jne .end
 	mov [rax], r8d
 
 .updateCounter:
 	call _array_size_offset
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
 	mov ecx, [rax]
 	inc ecx
 	mov [rax], ecx ; update counter
 	
-	mov rdx, 0
+	xor rdx, rdx
 	jmp .end
 	
 .errArrayIndexLessZero:
@@ -239,7 +243,6 @@ array_set:
 	pop rcx
 	ret
 
-
 ;----------------------------------------------
 ; array_push
 ; 
@@ -254,17 +257,17 @@ array_push:
 	push rdi
 
 	call array_size
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
 	mov rdx, rsi
 	mov rsi, rax
 
 	call array_set
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
-	mov rdx, 0
+	xor rdx, rdx
 	
 .end:
 	pop rdi

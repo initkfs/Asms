@@ -3,6 +3,7 @@
 ;  
 ; initkfs, 2018
 ; RDI: array address
+; Calls: array_get, array_set
 ;----------------------------------------------
 global array_sort
 ;	int temp;
@@ -26,7 +27,7 @@ array_sort:
 	push r12
 	
 	call array_size
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	mov rcx, rax ; save array size
 	
@@ -38,14 +39,14 @@ array_sort:
 
 	mov rsi, r9
 	call array_get
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	mov r10, rax ; r10 = data[j]
 	
 	dec rsi
 	mov r11, rsi ; r11 = j - 1
 	call array_get
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 	
 	mov r12, rax ; r12 = data[j - 1]
@@ -63,12 +64,12 @@ array_sort:
 	mov rsi, r11
 	mov rdx, r10
 	call array_set
-	cmp rdx, 0
+	test rdx, rdx
 	jne .end
 
 .continueInnerLoop:
 	dec r9
-	cmp r9, 0
+	test r9, r9
 	jg .innerLoop
 
 .continueOuterLoop:	
@@ -76,6 +77,7 @@ array_sort:
 	cmp r8, rcx
 	jl array_sort.outerLoop
 	
+	xor rdx, rdx
 	jmp .end
 	
 .end:

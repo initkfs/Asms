@@ -1,6 +1,6 @@
 ; initkfs, 2018
 ; ---------------------
-%include "lib/string/str.inc"
+%include "lib/string/str_length.inc"
 
 ; include last
 %include "tests/base_test.inc"
