@@ -1,14 +1,13 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_is_space"
-; Params: 1 - byte symbol, RDI
-;
-; Result: RAX, 1 if symbol is space, or 0
+; Params: 
+; RDI - byte symbol
+; Return: RAX, 1 if symbol is space symbol, or 0
 ;----------------------------------------------
 global str_is_space
 
 str_is_space:
-	.start:
 	
 	cmp dil, 0x20 ; " ", whitespace, ASCII 32
 	je .spaceFound
@@ -29,11 +28,13 @@ str_is_space:
 	je .spaceFound
 
 .spaceNotFound:
-	mov rax, 0
+	xor rax, rax
+	xor rdx, rdx
 	jmp .end
 
 .spaceFound:
 	mov rax, 1
+	xor rdx, rdx
 	
 .end:
 	ret

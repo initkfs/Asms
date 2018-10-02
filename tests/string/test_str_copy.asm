@@ -7,26 +7,37 @@
 section .data
 file: dq __FILE__
 
+section .bss
+copyDest: resb 10
+
 section .text
 global main
 
 main:
 
-testStringLength:
+testStringCopy:
 
-	mov rdi, string1
-	call str_length
+	mov rsi, string1
+	mov rdi, copyDest
+	call str_copy
 	test rdx, rdx
 	jne .fail
 	
-	mov r8, [string1Size]
-	cmp r8, rax
+	xor rcx, rcx
+.loop:
+	
+	mov al, byte [string1 + rcx]
+	mov r8b, byte [copyDest + rcx]
+	cmp al, r8b
 	jne .fail
+	
+	inc rcx
+	cmp rcx, [string1Size]
+	jne .loop
 	
 	call testSuccess
 	
 .fail:
-	call assertNumeric
 	mov rdi, __LINE__
 	mov rsi, file
 	call printFailInfo

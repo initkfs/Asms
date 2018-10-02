@@ -1,18 +1,19 @@
+;----------------------------------------------
 ; initkfs, 2018
-; ---------------------
-%macro num_from_string 1 ; target string, result in rax
+; procedure "str_2num"
+; Params: 
+; RDI - memory address of string. 
+; Return: RAX, number string representation
+; Calls: extern atoi
+; @TODO @FIXME save registers, add errors, etc
+;----------------------------------------------
+global str_2num:
 
 extern atoi
 
-push rdi
+str_2num:
 
-mov rdi, %1
-
-push rbp
-mov rbp,rsp
 call atoi
-leave
 
-pop rdi
-
-%endmacro
+.end
+	ret

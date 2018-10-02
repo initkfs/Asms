@@ -1,17 +1,24 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_cmp"
-; Params: 1 - memory address of first string, RDI. 2 - memory address second string, RSI
+; Params: 
+; RDI - memory address of first string. 
+; RSI - memory address second string, RSI
 ; Result: RAX - 1 if strings are equals. or 0
+; Calls: str_length
 ;----------------------------------------------
-global str_search
+global str_cmp
 
 str_cmp:
-	.start:
 	
 	push rcx
+	push rdi
+	push rsi
 	
 	call str_length
+	test rdx, rdx
+	jne .end
+	
 	mov rcx, rax
 	
 	cld
@@ -21,12 +28,16 @@ str_cmp:
 	
 .stringEquals:
 	mov rax, 1
+	xor rdx, rdx
 	jmp .end
 	
 .stringNotEquals:
-	mov rax, 0
+	xor rax, rax
+	xor rdx, rdx
 	
 .end:
+	pop rsi
+	pop rdi
 	pop rcx
 	ret
 ;----------------------------------------------

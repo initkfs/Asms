@@ -7,26 +7,39 @@
 section .data
 file: dq __FILE__
 
+section .bss
+strRepeated: resb 100
+
 section .text
 global main
 
 main:
 
-testStringLength:
+testStringRepeat:
 
-	mov rdi, string1
+	mov rdi, strRepeated
+	mov rsi, string1
+	mov rdx, 2
+	
+	call str_repeat
+	test rdx, rdx
+	jne .fail
+
+	mov rdi, strRepeated
 	call str_length
 	test rdx, rdx
 	jne .fail
 	
 	mov r8, [string1Size]
-	cmp r8, rax
+	add r8, [string1Size]
+	
+	cmp rax, r8
 	jne .fail
 	
 	call testSuccess
 	
 .fail:
-	call assertNumeric
+	mov rdx, r8
 	mov rdi, __LINE__
 	mov rsi, file
 	call printFailInfo

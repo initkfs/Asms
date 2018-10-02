@@ -12,21 +12,28 @@ global main
 
 main:
 
-testStringLength:
+testStringCompare:
 
 	mov rdi, string1
-	call str_length
+	mov rsi, stringEqualsWithString1
+	call str_cmp
 	test rdx, rdx
 	jne .fail
 	
-	mov r8, [string1Size]
-	cmp r8, rax
+	cmp rax, 1
+	jne .fail
+	
+	mov rsi, string2
+	call str_cmp
+	test rdx, rdx
+	jne .fail
+	
+	cmp rax, 0
 	jne .fail
 	
 	call testSuccess
 	
 .fail:
-	call assertNumeric
 	mov rdi, __LINE__
 	mov rsi, file
 	call printFailInfo

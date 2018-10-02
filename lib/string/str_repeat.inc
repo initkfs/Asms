@@ -1,29 +1,61 @@
+; errno=600
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_repeat"
-; Params: 1 - memory address of destination, RDI. 2 - memory address of string, RSI, 3 - repeat count, RDX
-;
+; Params: 
+; RDI - memory address of destination, 
+; RSI - memory address of string, 
+; RDX - repeat count, RDX
+; Return: none
+; Calls: str_length, str_copy
 ;----------------------------------------------
 global str_repeat
 
 str_repeat:
-	.start:
+
+	push r8
+	push rdi
+	push rsi
+	push rax
+	
+.start:
+
+	test rdx, rdx
+	jl .errCountIsNegative
+	
+	mov r8, rdx
 	
 	xchg rdi, rsi
 	call str_length
+	test rdx, rdx
+	jne .end
+	
 	xchg rdi, rsi
 	
-	mov rcx, rdx
+	mov rcx, r8
+	
 .repeat:
 
 	call str_copy
+	test rdx, rdx
+	jne .end
+	
 	lea rdi, [rdi + rax]
 		
 	loop .repeat
 
 	mov [rdi], byte 0x00
+	xor rdx, rdx
+	jmp .end
+
+.errCountIsNegative:
+	mov rdx, 601
 
 .end:
+	pop rax
+	pop rsi
+	pop rdi
+	pop r8
 	ret
 ;----------------------------------------------
 ;			procedure "str_repeat" end

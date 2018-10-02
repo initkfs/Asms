@@ -9,6 +9,7 @@ lineFormat: db "LINE: %d", 10, 0
 fileFormat: db "File: %s", 10, 0
 
 numFormat: db "number=%d", 10, 0
+strformat: db "string=%s", 10, 0
 
 actualNumFormat: db "Actual: %d, expected: %d", 10, 0
 
@@ -30,6 +31,15 @@ printInfo:
 	pop rsi
 	ret
 	
+global printString
+printString:
+	push rdi
+	mov rdi, strformat
+	call printInfo
+.end:
+	pop rdi
+	ret
+	
 global printNum
 printNum:
 
@@ -37,7 +47,7 @@ printNum:
 	mov rdi, numFormat
 	call printInfo
 .end: 
-	push rdi
+	pop rdi
 	ret
 
 global printFailInfo

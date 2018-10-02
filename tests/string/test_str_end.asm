@@ -12,15 +12,15 @@ global main
 
 main:
 
-testStringLength:
+testStringEnd:
 
 	mov rdi, string1
-	call str_length
+	mov rsi, string1EndWord
+	call str_end
 	test rdx, rdx
 	jne .fail
 	
-	mov r8, [string1Size]
-	cmp r8, rax
+	cmp rax, 1
 	jne .fail
 	
 	call testSuccess

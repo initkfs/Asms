@@ -12,21 +12,20 @@ global main
 
 main:
 
-testStringLength:
+testStringSearch:
 
 	mov rdi, string1
-	call str_length
+	mov rsi, string1SearchWord
+	call str_search
 	test rdx, rdx
 	jne .fail
 	
-	mov r8, [string1Size]
-	cmp r8, rax
+	cmp rax, [string1SearchWordIndex]
 	jne .fail
 	
 	call testSuccess
 	
 .fail:
-	call assertNumeric
 	mov rdi, __LINE__
 	mov rsi, file
 	call printFailInfo

@@ -1,24 +1,31 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_start"
-; Params: 1 - memory address of string, RDI. 2 - memory address of pattern, RSI
-; Result: RAX, 1 if starts with pattern, or 0
+; Params: 
+; RDI - memory address of string. 
+; RSI - memory address of pattern.
+; Return: RAX, 1 if starts with pattern, or 0
+; Calls: str_search
 ;----------------------------------------------
 global str_start
 
 str_start:
-	.start:
 	
 	call str_search
-	cmp rax, 0
+	test rdx, rdx
+	jne .end
+	
+	test rax, rax
 	je .patternFound
 	
 .patternNotFound:
-	mov rax, 0
+	xor rax, rax
+	xor rdx, rdx
 	jmp .end
 
 .patternFound:
 	mov rax, 1
+	xor rdx, rdx
 	
 .end:
 	ret

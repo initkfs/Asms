@@ -1,13 +1,15 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_copy"
-; Params: 1 - memory address of destination, RDI. 2 - memory address of string, RSI.
-;
+; Params: 
+; RDI - memory address of destination. 
+; RSI - memory address of string.
+; Return: none
+; Calls: str_length
 ;----------------------------------------------
 global str_copy
 
 str_copy:
-	.start:
 	
 	push rcx
 	push rax
@@ -16,15 +18,19 @@ str_copy:
 	
 	xchg rdi, rsi
 	call str_length ; get source length
+	test rdx, rdx
+	jne .end
+	
 	mov rcx, rax
 	
 	xchg rdi, rsi;
 
 	cld
-	rep movsb
+	rep movsb ; copy from rdi to rsi
 	
 	mov [rdi], byte 0x00 ; add null-byte
 	
+	xor rdx, rdx
 .end:
 	pop rsi
 	pop rdi

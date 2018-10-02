@@ -1,14 +1,16 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_search"
-; Params: 1 - memory address of string, RDI. 2 - memory address of pattern, RSI
-; Result: RAX, index of pattern, or -1 if pattern not found
+; Params: 
+; RDI - memory address of string. 
+; RSI - memory address of pattern, RSI
+; Return: RAX, index of pattern, or -1 if pattern not found
+; Calls: str_length
 ;----------------------------------------------
 global str_search
 
 str_search:
-	.start:
-	
+
 	push rcx
 	push rbx
 	push r8
@@ -18,11 +20,17 @@ str_search:
 	enter 16, 0 ; two counter 8 byte x 2
 	
 	call str_length
+	test rdx, rdx
+	jne .end
+	
 	mov [rbp - 16], rax ; string length counter
 	
 	xchg rdi, rsi
 	
 	call str_length
+	test rdx, rdx
+	jne .end
+	
 	mov [rbp - 8], rax ; pattern counter
 	
 	xchg rdi, rsi
@@ -68,10 +76,12 @@ str_search:
 	
 .patternFound:
 	mov rax, rcx
+	xor rdx, rdx
 	jmp .end
 	
 .patternNotFound:
 	mov rax, -1
+	xor rdx, rdx
 	
 .end:
 	leave

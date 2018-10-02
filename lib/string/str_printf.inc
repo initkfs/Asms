@@ -1,7 +1,11 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_printf"
-; RDI - memory address of string format, RSI - target value, RDX - 1 is a float value
+; Params: 
+; RDI - memory address of string format
+; RSI - target value 
+; RDX - 1 is a float value
+; Calls: extern printf
 ;----------------------------------------------
 global str_printf
 
@@ -58,8 +62,9 @@ str_printf:
 	movq xmm0, qword rsi
 	
 .call:
+	;TODO check error
 	call printf
-	mov rdx, 0
+	xor rdx, rdx
 
 .end:
 	pop r15
@@ -74,5 +79,4 @@ str_printf:
 	pop rsi        
 	pop rcx
 	pop rax
-	;pop rdx
 	ret

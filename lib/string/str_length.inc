@@ -3,6 +3,7 @@
 ; initkfs, 2018
 ; procedure "str_length"
 ; RDI: 1 - memory address of string.
+; Return: RAX: size of string
 ;----------------------------------------------
 global str_length
 
@@ -15,7 +16,7 @@ str_length:
 	
 .length:
      mov al, byte [rdi + rcx]
-     cmp al, 0 ; null-byte
+     test al, al ; check is null-byte
      je .result
      
      inc rcx
@@ -23,8 +24,7 @@ str_length:
 
 .result:
 	mov rax, rcx
-	mov rdx, 0
-	jmp .end
+	xor rdx, rdx
 
 .end:
 	pop rcx
