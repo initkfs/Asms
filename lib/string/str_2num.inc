@@ -26,7 +26,7 @@ str_2num:
 	push r15
 
 	call atoi
-	//@TODO check error
+	;@TODO check error
 	xor rdx, rdx
 
 .end:
