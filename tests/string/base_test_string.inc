@@ -11,19 +11,19 @@
 %include "tests/base_test.inc"
 
 section .data
-string1: db "Hello,",10, 0
-string1Size: dq 7
+string1: db "Hello",10, 0
+string1Size: dq 6
 string2: db " world!", 10, 0
 string2Size: dq 8
 
-string1And2Concat: db "Hello," world!", 10, 0
-string1And2Size: dq 14
-stringEqualsWithString1: db "Hello,",10, 0
+string1And2Concat: db "Hello world!",10, 0
+string1And2Size: dq 13
+stringEqualsWithString1: db "Hello",10, 0
 
 string1SearchWord: db "llo", 0
 string1SearchWordIndex: dq 2
 
-string1EndWord: db "lo,", 10, 0
-string1EndWordIndex: dq 3
+string1EndWord: db "lo", 10, 0
+string1EndWordIndex: dq 2
 
 section .text
