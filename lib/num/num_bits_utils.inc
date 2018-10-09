@@ -12,7 +12,8 @@ num1shl:
 	mov cl, al ; required for shl
 	mov rax, 1
 	shl rax, cl ; 1 << n
-
+	
+	xor rdx, rdx
 .end:
 	pop rcx
 	ret
@@ -37,9 +38,12 @@ num_set_bit:
 	
 	xchg rdi, rax ; rax: n-bit, rdi: number
 	call num1shl ; rax: 1 << n - 1
+	test rdx, rdx
+	jne .end
 	
 	xor rdi, rax
 	mov rax, rdi ; set result
+	xor rdx, rdx
 .end:
 	pop rdi
 	ret
@@ -70,16 +74,20 @@ num_is_bit_set:
 	
 	xchg rdi, rax ; swap rax and rdi, rax: n - 1, rdi: n-bit
 	call num1shl ; rax: 1 << n - 1
+	test rdx, rdx
+	jne .end
 	
 	and rax, rdi
 	jnz .bitSet
 
 .bitNotSet:
 	mov rax, 0
+	xor rdx, rdx
 	jmp .end
 	
 .bitSet:
 	mov rax, 1
+	xor rdx, rdx
 	
 .end:
 	pop rdi
@@ -104,9 +112,12 @@ num_unset_bit:
 	
 	xchg rdi, rax ; rax: n-bit, rdi: number
 	call num1shl ; rax: 1 << n - 1
+	test rdx, rdx
+	jne .end
 	
 	not rax	
 	and rax, rdi
+	xor rdx, rdx
 .end:
 	pop rdi
 	ret

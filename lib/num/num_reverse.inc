@@ -1,3 +1,4 @@
+; errno=700
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "num_reverse"
@@ -14,14 +15,13 @@ num_reverse:
 	;}
 	
 	push rcx
-	push rdx
 	push r8
 	push r9
 	
-	cmp rdi, 0
-	jl .error
+	test rdi, rdi
+	jl .errArgNumberIsNegative
 	
-	mov r8, 0 ; r8 == reverse
+	xor r8, r8 ; r8 == reverse
 	mov rcx, rdi ; rcx == number
 .iterate:
 
@@ -41,18 +41,19 @@ num_reverse:
 	div r9
 	mov rcx, rax
 	
-	cmp rcx, 0
+	test rcx, rcx
 	jne .iterate
 	
 	mov rax, r8
+	xor rdx, rdx
 	jmp .end
-.error: 
-	mov rax, -1
+
+.errArgNumberIsNegative:
+	mov rdx, 701
 	
 .end:
 	pop r9
 	pop r8
-	pop rdx
 	pop rcx
 	ret
 ;----------------------------------------------

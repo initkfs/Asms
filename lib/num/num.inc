@@ -1,0 +1,9 @@
+%include "lib/num/num_abs.inc"
+%include "lib/num/num_bits_utils.inc"
+%include "lib/num/num_cmp.inc"
+%include "lib/num/num_cmpd.inc"
+%include "lib/num/num_gcd.inc"
+%include "lib/num/num_reverse.inc"
+%include "lib/num/num_sqrt.inc"
+%include "lib/num/num_trigs_utils.inc"
+

@@ -21,10 +21,8 @@ num_sin:
 	
 	fst qword [rbp - 16]
 	mov rax, qword [rbp - 16]
+	xor rdx, rdx
 	jmp .end
-	
-.error:
-	mov rax, -1
 
 .end:
 	leave
@@ -52,6 +50,7 @@ num_cos:
 	fcos
 	fst qword [rbp - 16]
 	mov rax, qword [rbp - 16]
+	xor rdx, rdx
 .end:
 	leave
 	ret

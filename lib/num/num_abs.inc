@@ -1,8 +1,9 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "num_abs"
+; Params:
 ; RDI - number
-; Result in RAX
+; Return: RAX
 ;----------------------------------------------
 global num_abs
 
@@ -18,7 +19,7 @@ num_abs:
 	sub rdx, rax
 
 	mov rax, rdx
-	mov rdx, 0
+	xor rdx, rdx
 	
 .end:
 	ret

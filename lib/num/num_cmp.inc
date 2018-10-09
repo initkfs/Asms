@@ -1,3 +1,4 @@
+; errno=800
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "num_cmp"
@@ -25,25 +26,29 @@ num_cmp:
 	
 	fstsw ax ; save swr to ax
 	sahf ; save ax to rflags
-	jp .error
+	jp .errUnknownFpuError
 	jc .greater
 	jz .equals
 	
 .less:
 	mov rax, -1
-	jmp .end
+	jmp .result
 	
 .greater:
 	mov rax, 1
-	jmp .end
+	jmp .result
 	
 .equals:
 	mov rax, 0
+	jmp .result
+	
+.result:
+	xor rdx, rdx
 	jmp .end
 	
-.error: 
-	mov rax, -2
-	
+.errUnknownFpuError: 
+	mov rdx, 801
+
 .end:
 	leave
 	ret

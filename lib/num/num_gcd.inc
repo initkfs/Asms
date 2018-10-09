@@ -29,6 +29,8 @@ num_gcd:
    
     cmp rcx, 0		; while(b != 0)
     jne .while		; 
+    
+    xor rdx, rdx
  
 .end:
 	ret

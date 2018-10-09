@@ -1,3 +1,4 @@
+; errno=850
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "num_cmpd"
@@ -15,24 +16,28 @@ num_cmpd:
 	movd xmm0, edi
 	movd xmm1, esi
 	comiss xmm0, xmm1
-	jp .error
+	jp .unknownCompareError
 	jc .less
 	jz .equals
 	
 .greater:
 	mov rax, 1
-	jmp .end
+	jmp .result
 	
 .less:
 	mov rax, -1
-	jmp .end
+	jmp .result
 	
 .equals:
 	mov rax, 0
+	jmp .result
+	
+.result:
+	xor rdx, rdx
 	jmp .end
 	
-.error: 
-	mov rax, -2
+.unknownCompareError: 
+	mov rdx, 851
 	
 .end:
 	ret
