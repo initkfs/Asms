@@ -1,3 +1,4 @@
+%include "lib/num/num_constant_utils.inc"
 %include "lib/num/num_abs.inc"
 %include "lib/num/num_bits_utils.inc"
 %include "lib/num/num_cmp.inc"

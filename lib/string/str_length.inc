@@ -20,11 +20,18 @@ str_length:
      je .result
      
      inc rcx
+     ;jc .errLengthOverflow
+     jo .errLengthOverflow
      jmp .length
 
 .result:
 	mov rax, rcx
 	xor rdx, rdx
+	jmp .end
+	
+.errLengthOverflow:
+	xor rax, rax
+	mov rdx, 551
 
 .end:
 	pop rcx
