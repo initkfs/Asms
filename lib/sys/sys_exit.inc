@@ -2,7 +2,8 @@
 ; initkfs, 2018
 ;  
 ; System exit
-; RDI: positive number, exit code
+; RDI: exit code, positive number: 0 <= code <=255
+; System calls: sys_exit
 ;----------------------------------------------
 global sys_exit
 
@@ -16,7 +17,7 @@ sys_exit:
 	jmp .exit
 
 .errReturnCodeNegative:
-	mov rdi, 101 ; error code, 0 <= code <=255
+	mov rdi, 101
 	jmp .exit
 	
 .errReturnCodeTooLarge:

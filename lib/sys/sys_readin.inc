@@ -1,7 +1,9 @@
 ; errno=300
 ; initkfs, 2018
 ; 
-; RDI: char *buf, RSI: size_t count
+; RDI: memory address of a buffer, 
+; RSI: input string size
+; System calls: sys_read
 ; ---------------------
 global sys_readin:
 
@@ -21,11 +23,18 @@ sys_readin:
 	xor rdi, rdi ; rdi == 0: stdin
   
 	syscall
+	test rax, rax
+	jl .errSysCallReadInError
+	
 	xor rdx, rdx
 	jmp .end
 	
 .errSizeIsZeroOrNegative:
 	mov rdx, 301
+	jmp .end
+
+.errSysCallReadInError:
+	mov rdx, 302
 
 .end:
 	pop rsi
