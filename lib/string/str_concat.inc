@@ -2,9 +2,8 @@
 ; initkfs, 2018
 ; procedure "str_concat"
 ; Params: 
-; RDI memory address of destination. 
-; RSI - memory address of string.
-; Return: none
+; RDI, memory address of destination. 
+; RSI, memory address of string.
 ; Calls: str_repeat
 ;----------------------------------------------
 global str_concat

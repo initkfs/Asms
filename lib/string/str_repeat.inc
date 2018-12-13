@@ -3,10 +3,9 @@
 ; initkfs, 2018
 ; procedure "str_repeat"
 ; Params: 
-; RDI - memory address of destination, 
-; RSI - memory address of string, 
-; RDX - repeat count, RDX
-; Return: none
+; RDI, memory address of destination, 
+; RSI, memory address of string, 
+; RDX, repeat count, RDX
 ; Calls: str_length, str_copy
 ;----------------------------------------------
 global str_repeat

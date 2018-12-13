@@ -2,9 +2,9 @@
 ; initkfs, 2018
 ; procedure "str_search"
 ; Params: 
-; RDI - memory address of string. 
-; RSI - memory address of pattern, RSI
-; Return: RAX, index of pattern, or -1 if pattern not found
+; RDI, memory address of string. 
+; RSI, memory address of pattern, RSI
+; Returns: RAX, index of pattern, or -1 if pattern not found
 ; Calls: str_length
 ;----------------------------------------------
 global str_search

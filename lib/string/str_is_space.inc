@@ -2,8 +2,8 @@
 ; initkfs, 2018
 ; procedure "str_is_space"
 ; Params: 
-; RDI - byte symbol
-; Return: RAX, 1 if symbol is space symbol, or 0
+; RDI, byte symbol
+; Returns: RAX, 1 if symbol is space symbol, or 0
 ;----------------------------------------------
 global str_is_space
 

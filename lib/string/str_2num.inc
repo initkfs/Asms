@@ -1,11 +1,11 @@
+; errno=900
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_2num"
 ; Params: 
-; RDI - memory address of string. 
-; Return: RAX, number string representation
+; RDI, memory address of string. 
+; Returns: RAX, number string representation
 ; Calls: extern atoi
-; @TODO @FIXME save registers, add errors, etc
 ;----------------------------------------------
 global str_2num:
 
@@ -26,8 +26,13 @@ str_2num:
 	push r15
 
 	call atoi
-	;@TODO check error
+	test rax, rax
+	jl .errAtoiCallError
 	xor rdx, rdx
+	jmp .end
+	
+.errAtoiCallError
+	mov rdx, 901
 
 .end:
 	pop r15

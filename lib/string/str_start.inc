@@ -2,9 +2,9 @@
 ; initkfs, 2018
 ; procedure "str_start"
 ; Params: 
-; RDI - memory address of string. 
-; RSI - memory address of pattern.
-; Return: RAX, 1 if starts with pattern, or 0
+; RDI, memory address of string. 
+; RSI, memory address of pattern.
+; Returns: RAX, 1 if starts with pattern, or 0
 ; Calls: str_search
 ;----------------------------------------------
 global str_start

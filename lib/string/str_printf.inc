@@ -1,10 +1,11 @@
+; errno=1000
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_printf"
 ; Params: 
-; RDI - memory address of string format
-; RSI - target value 
-; RDX - 1 is a float value
+; RDI, memory address of string format
+; RSI, target value 
+; RDX, 1 is a float value
 ; Calls: extern printf
 ;----------------------------------------------
 global str_printf
@@ -52,19 +53,25 @@ str_printf:
 	push r15
 
 	cmp rdx, 1
-	je .printFloat
+	je .preparePrintFloat
 	
-	xor rax,rax ; segfault without reset 
-	jmp .call
+	xor rax, rax ; segfault without reset 
+	jmp .callPrintf
 	
-.printFloat:
+.preparePrintFloat:
 	mov rax, 1
 	movq xmm0, qword rsi
 	
-.call:
+.callPrintf:
 	;TODO check error
 	call printf
+	test rax, rax
+	jl .errCallPrintfError
 	xor rdx, rdx
+	jmp .end
+	
+.errCallPrintfError:
+	mov rdx, 1001
 
 .end:
 	pop r15

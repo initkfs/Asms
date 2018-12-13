@@ -2,16 +2,15 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_length"
-; RDI: 1 - memory address of string.
-; Return: RAX: size of string
+; RDI: memory address of string.
+; Returns: RAX - size of ASCII string
 ;----------------------------------------------
 global str_length
 
 str_length:
 	
 	push rcx
-	
-	xor rax, rax
+
 	xor rcx, rcx
 	
 .length:
@@ -21,7 +20,7 @@ str_length:
      
      inc rcx
      ;jc .errLengthOverflow
-     jo .errLengthOverflow
+     jo .errLengthNumberOverflow
      jmp .length
 
 .result:
@@ -29,7 +28,7 @@ str_length:
 	xor rdx, rdx
 	jmp .end
 	
-.errLengthOverflow:
+.errLengthNumberOverflow:
 	xor rax, rax
 	mov rdx, 551
 

@@ -2,9 +2,9 @@
 ; initkfs, 2018
 ; procedure "str_cmp"
 ; Params: 
-; RDI - memory address of first string. 
-; RSI - memory address second string, RSI
-; Result: RAX - 1 if strings are equals. or 0
+; RDI, memory address of first string. 
+; RSI, memory address second string, RSI
+; Returns: RAX - 1 if strings are equals. or 0
 ; Calls: str_length
 ;----------------------------------------------
 global str_cmp

@@ -1,10 +1,11 @@
+; errno=950
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_end"
 ; Params: 
-; RDI - memory address of string. 
-; RSI - memory address of pattern, RSI
-; Return: RAX, 1 if ends with pattern, or 0
+; RDI, memory address of string. 
+; RSI, memory address of pattern
+; Returns: RAX, 1 if ends with pattern, or 0
 ; Calls: str_length, str_search
 ; @TODO space char: 10, etc?
 ;----------------------------------------------
@@ -20,7 +21,7 @@ str_end:
 	jne .end
 	
 	test rax, rax ; check correct source string length
-	jle .patternNotFound
+	jle .patternNotFound ; or error?
 	
 	mov r8, rax ; save source string length
 	
@@ -45,6 +46,7 @@ str_end:
 	; rcx - searched index
 	; index + pattern length = string length
 	add rcx, rax
+	jo .errStringLengthResultOverflow
 	
 	cmp r8, rcx
 	je .patternFound
@@ -57,10 +59,15 @@ str_end:
 .patternFound:
 	mov rax, 1
 	xor rdx, rdx
+	jmp .end
+	
+.errStringLengthResultOverflow:
+	xor rax, rax
+	mov rdx, 951
 	
 .end:
 	pop rcx
-	pop rbx
+	pop r8
 	ret
 ;----------------------------------------------
 ;			procedure "str_end" end
