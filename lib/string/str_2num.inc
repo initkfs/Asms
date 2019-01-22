@@ -31,7 +31,7 @@ str_2num:
 	xor rdx, rdx
 	jmp .end
 	
-.errAtoiCallError
+.errAtoiCallError:
 	mov rdx, 901
 
 .end:

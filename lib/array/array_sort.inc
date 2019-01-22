@@ -26,7 +26,7 @@ array_sort:
 	push r11
 	push r12
 	
-	call array_size
+	call array_count
 	test rdx, rdx
 	jne .end
 	mov rcx, rax ; save array size

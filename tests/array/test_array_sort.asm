@@ -1,10 +1,10 @@
 ; initkfs, 2018
 ; ---------------------
-%include "lib/array32/array_utils.inc"
-%include "lib/array32/array_sort.inc"
+%include "lib/array/array_utils.inc"
+%include "lib/array/array_sort.inc"
 
 ; include last
-%include "tests/array32/base_test_array.inc"
+%include "tests/array/base_test_array.inc"
 
 section .data
 file: dq __FILE__
@@ -17,31 +17,30 @@ main:
 testArraySort:
 
 	call fillArray
-	cmp rdx, 0
+	test rdx, rdx
 	jne .fail
 	
 	mov rdi, dataArray
 	call array_sort
 	
-	mov rcx, 0
-.cmpElements:
+	xor rcx, rcx
+	
+.compareElements:
 
 	mov rsi, rcx
 	call array_get
-	cmp rdx, 0
+	test rdx, rdx
 	jne .fail
 	
-	mov r8b, [arraySorted + rcx]
-	cmp r8b, al
+	mov r8, [arraySorted + rcx * 8]
+	cmp r8, rax
 	jne .fail
-
 
 	inc rcx
 	cmp rcx, [arrayElementsCount]
-	jl .cmpElements
+	jl .compareElements
 	
 	call testSuccess
-	
 .fail:
 	call assertNumeric
 	mov rdi, __LINE__

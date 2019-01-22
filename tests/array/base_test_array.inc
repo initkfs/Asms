@@ -13,27 +13,36 @@ array4element: dq 9
 array5element: dq 2
 arrayElementsCount: dq 5
 
-arraySorted: db 2,3,6,8,9
+arraySizeSpecifier: dq 8
+
+arraySorted: dq 2,3,6,8,9
 
 section .bss
-dataArray: resb 4  + 20; 4byte counter +  5 * 4 bytes data
+dataArray: resb 1 + 8 + 20;
 
 section .text
-
 global fillArray
+
 fillArray:
 	push rdi
 	push rcx
-	push rax
+	push rsi
 	
 	mov rdi, dataArray
+	mov rsi, [arraySizeSpecifier]
 	
-	mov rcx, 0
+	call array_init
+	test rdx, rdx
+	jne .error
+	
+	xor rcx, rcx
 	
 .addElement:
-	mov rsi, [array1element + rcx * 8]
-	call array_push
-	cmp rdx, 0
+
+	mov rsi, rcx
+	mov rdx, [array1element + rcx * 8]
+	call array_set
+	test rdx, rdx
 	jne .error
 	
 	inc rcx
@@ -41,18 +50,19 @@ fillArray:
 	cmp rcx, [arrayElementsCount]
 	jl .addElement
 	
-	call array_size
+	call array_count
 	cmp rax, [arrayElementsCount]
 	jne .error
 	
-	mov rdx, 0
+	xor rdx, rdx
 	jmp .end
 
 .error:
-	mov rdx, 1
+	mov rdx, -1
 	
 .end:
-	pop rax
+	pop rsi
 	pop rcx
 	pop rdi
 	ret
+

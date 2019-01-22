@@ -11,7 +11,7 @@ fileFormat: db "File: %s", 10, 0
 numFormat: db "number=%d", 10, 0
 strformat: db "string=%s", 10, 0
 
-actualNumFormat: db "Actual: %d, expected: %d", 10, 0
+actualNumFormat: db "Actual (RAX): %d, expected (R8): %d", 10, 0
 
 section .data
 file1: dq __FILE__
