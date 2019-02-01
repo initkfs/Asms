@@ -64,7 +64,7 @@ str_printf:
 	
 .callPrintf:
 	;TODO check error
-	call printf
+	call printf WRT ..plt
 	test rax, rax
 	jl .errCallPrintfError
 	xor rdx, rdx

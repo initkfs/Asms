@@ -25,7 +25,7 @@ str_2num:
 	push r14
 	push r15
 
-	call atoi
+	call atoi WRT ..plt
 	test rax, rax
 	jl .errAtoiCallError
 	xor rdx, rdx

@@ -1,4 +1,4 @@
-; errno=1000
+; errno=1100
 ;----------------------------------------------
 ; array_init
 ;  
@@ -27,11 +27,11 @@ array_init:
 	jmp .end
 	
 .errInvalidArraySizeSpecifier:
-	mov rdx, 1001
+	mov rdx, 1101
 	jmp .end
 	
 .errArraySizeSpicifierTooLarge:
-	mov rdx, 1002
+	mov rdx, 1102
 	
 .end:
 	ret
@@ -158,7 +158,7 @@ _array_element_offset:
 	jmp .end
 	
 .errArrayIndexLessZero:
-	mov rdx, 410
+	mov rdx, 1150
 	jmp .end
 	
 .end:
@@ -246,15 +246,15 @@ array_set:
 	jmp .end
 	
 .errArrayIndexLessZero:
-	mov rdx, 430
+	mov rdx, 1160
 	jmp .end
 
 .errArrayIndexLargerArraySize:
-	mov rdx, 431
+	mov rdx, 1161
 	jmp .end
 	
 .errArrayIndexInvalidForEmptyArray:
-	mov rdx, 432
+	mov rdx, 1162
 	jmp .end
 	
 .end:
