@@ -1,7 +1,6 @@
 ; initkfs, 2018
 ; ---------------------
-%include "lib/array/array_utils.inc"
-
+;%include "lib/array/array_utils.inc"
 ; include last
 %include "tests/array/base_test_array.inc"
 
@@ -192,12 +191,3 @@ testArrayRemoveElement:
 	mov rdi, __LINE__
 	mov rsi, file
 	call printFailInfo
-	
-
-
-
-	
-	
-
-
-

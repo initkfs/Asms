@@ -3,6 +3,7 @@
 
 ; include last
 %include "tests/base_test.inc"
+%include "lib/array/array.inc"
 
 section .data
 ; don't move, use as array

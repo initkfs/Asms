@@ -1,8 +1,6 @@
 ; initkfs, 2018
 ; ---------------------
-%include "lib/array/array_utils.inc"
-%include "lib/array/array_sort.inc"
-
+;%include "lib/array/array_sort.inc"
 ; include last
 %include "tests/array/base_test_array.inc"
 
