@@ -39,7 +39,7 @@ num_cmp:
 	jmp .result
 	
 .equals:
-	mov rax, 0
+	xor rax, rax
 	jmp .result
 	
 .result:

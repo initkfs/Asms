@@ -27,7 +27,7 @@ num_gcd:
     mov rax, rcx	; a = b
     mov rcx, rdx	; b = remainder
    
-    cmp rcx, 0		; while(b != 0)
+    test rcx, rcx	; while(b != 0)
     jne .while		; 
     
     xor rdx, rdx

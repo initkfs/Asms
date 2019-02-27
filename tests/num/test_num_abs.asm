@@ -15,6 +15,14 @@ main:
 
 testNumAbs:
 
+	xor rdi, rdi
+	call num_abs
+	test rdx, rdx
+	jne .fail
+	
+	test rax, rax
+	jne .fail
+
 	mov rdi, [num1]
 	call num_abs
 	test rdx, rdx

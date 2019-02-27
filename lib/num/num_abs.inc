@@ -3,7 +3,7 @@
 ; procedure "num_abs"
 ; Params:
 ; RDI - number
-; Return: RAX
+; Returns: RAX, absolute value of a number
 ;----------------------------------------------
 global num_abs
 
