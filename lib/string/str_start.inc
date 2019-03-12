@@ -24,7 +24,8 @@ str_start:
 	jmp .end
 
 .patternFound:
-	mov rax, 1
+	xor rax, rax
+	inc rax ; mov rax, 1
 	xor rdx, rdx
 	
 .end:

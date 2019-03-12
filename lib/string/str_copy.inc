@@ -2,7 +2,7 @@
 ; initkfs, 2018
 ; procedure "str_copy"
 ; Params: 
-; RDI, memory address of destination. 
+; RDI, memory address of destination with the addition of null byte. 
 ; RSI, memory address of string.
 ; Calls: str_length
 ;----------------------------------------------

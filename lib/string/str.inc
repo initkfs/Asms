@@ -2,7 +2,7 @@
 %include "lib/string/str_search.inc"
 %include "lib/string/str_start.inc"
 %include "lib/string/str_end.inc"
-%include "lib/string/str_is_space.inc"
+%include "lib/string/str_is_blank.inc"
 %include "lib/string/str_cmp.inc"
 %include "lib/string/str_copy.inc"
 %include "lib/string/str_repeat.inc"

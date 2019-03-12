@@ -27,7 +27,8 @@ str_cmp:
 	jne .stringNotEquals ; do not use jecxz, last byte is lost
 	
 .stringEquals:
-	mov rax, 1
+	xor rax, rax
+	inc rax ; mov rax, 1
 	xor rdx, rdx
 	jmp .end
 	
