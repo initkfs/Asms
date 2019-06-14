@@ -3,8 +3,8 @@
 ; procedure "str_search"
 ; Params: 
 ; Strings must end with a null character
-; RDI, memory address of string. 
-; RSI, memory address of pattern, RSI
+; RDI, memory address of string
+; RSI, memory address of pattern
 ; Example:
 ;	mov rdi, string
 ;	mov rsi, pattern

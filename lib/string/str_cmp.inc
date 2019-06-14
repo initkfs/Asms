@@ -4,13 +4,13 @@
 ; Params: 
 ; Strings must end with a null character
 ; RDI, memory address of first string
-; RSI, memory address second string
+; RSI, memory address of second string
 ; Example:
 ;	mov rdi, string1
 ;	mov rsi, string2
 ;	call str_cmp
 ;
-; Returns: RAX - 1 if strings are equals. or 0. Special characters are also compared.
+; Returns: RAX - 1 if strings are equals, or 0. Special characters are also compared
 ; Calls: str_length
 ; Note: Exit the procedure immediately if any non-system called function returns an error
 ;----------------------------------------------

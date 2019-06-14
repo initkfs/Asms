@@ -3,7 +3,7 @@
 ; initkfs, 2018
 ; procedure "str_length"
 ; Strings must end with a null character
-; RDI: memory address of string with null character.
+; RDI: memory address of string with null character
 ; Example:
 ; 	mov rdi, source ;source: db "Hello", 10, 0
 ;	call str_length ;RAX: 6
