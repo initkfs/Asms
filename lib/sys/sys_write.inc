@@ -3,13 +3,20 @@
 ; 
 ; Prints string to stdout
 ; RDI: memory address of string
-; RSI: number of characters to print, or 0 for full string
+; RSI: number of characters to print, or 0 for full string. Be careful with utf.
+;
+; Example:
+; 	xor rsi, rsi
+; 	mov rdi, source
+; 	call sys_write 
+;
 ; Calls: str_length
 ; System calls: sys_write
 ; Error: if string size in RSI is negative
 ; Error: if string size in RSI is larger than the string
 ; Error: if string length is zero, ex: string: db "", 0 will throw an error
-; Error: sys_write system call error
+; Error: if an error occurred while calling the sys_write
+; Note: Exit the procedure immediately if any non-system called function returns an error
 ; ---------------------
 global sys_write:
 

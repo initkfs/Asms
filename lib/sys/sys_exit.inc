@@ -3,7 +3,13 @@
 ;  
 ; System exit
 ; RDI: exit code, positive number: 0 <= code <=255
+;
+; Example:
+;	mov rdi, 2
+;	call sys_exit
+;
 ; System calls: sys_exit
+; Error: if the return code is less than zero and more than 255
 ;----------------------------------------------
 global sys_exit
 
