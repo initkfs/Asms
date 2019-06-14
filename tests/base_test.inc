@@ -1,7 +1,7 @@
 ; initkfs, 2018
 ; ---------------------
 %include "lib/sys/sys_exit.inc"
-%include "lib/string/str_printf.inc"
+%include "lib/string/str.inc"
 
 section .data
 exitFormat: db "ERROR_CODE: %d", 10, 0
@@ -51,9 +51,12 @@ printNum:
 	ret
 
 global printFailInfo
-; RDX - exit code, RDI - line, RSI - file path
+; RDX - exit code
+; RDI - line
+; RSI - file path
 printFailInfo:
 
+	push rdx
 	push rdi
 	push rsi
 	push r8
@@ -77,6 +80,7 @@ printFailInfo:
 	pop r8
 	pop rsi
 	pop rdi
+	pop rdx
 	ret
 
 

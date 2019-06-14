@@ -2,10 +2,17 @@
 ; initkfs, 2018
 ; procedure "str_search"
 ; Params: 
+; Strings must end with a null character
 ; RDI, memory address of string. 
 ; RSI, memory address of pattern, RSI
+; Example:
+;	mov rdi, string
+;	mov rsi, pattern
+;	call str_search
+;
 ; Returns: RAX, index of pattern, or -1 if pattern not found
 ; Calls: str_length
+; Note: Exit the procedure immediately if any non-system called function returns an error
 ;----------------------------------------------
 global str_search
 

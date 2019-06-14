@@ -3,10 +3,19 @@
 ; initkfs, 2018
 ; procedure "str_repeat"
 ; Params: 
-; RDI, memory address of destination with the addition of null byte, 
-; RSI, memory address of string, 
-; RDX, repeat count, RDX
+; Strings must end with a null character
+; RDI, memory address of destination with the addition of null byte
+; RSI, memory address of string
+; RDX, repeat count
+; Example:
+;	mov rdi, dest
+;	mov rsi, string
+;	mov rdx, 2
+;	call str_repeat
+;
 ; Calls: str_length, str_copy
+; Error: if count is negative
+; Note: Exit the procedure immediately if any non-system called function returns an error
 ;----------------------------------------------
 global str_repeat
 
@@ -16,6 +25,7 @@ str_repeat:
 	push rdi
 	push rsi
 	push rax
+	push rcx
 	
 .start:
 
@@ -51,6 +61,7 @@ str_repeat:
 	mov rdx, 601
 
 .end:
+	pop rcx
 	pop rax
 	pop rsi
 	pop rdi

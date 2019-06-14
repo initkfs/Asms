@@ -4,8 +4,10 @@
 ; procedure "str_2num"
 ; Params: 
 ; RDI, memory address of string. 
-; Returns: RAX, number string representation
+; Returns: RAX, numeric string representation
 ; Calls: extern atoi
+; Error: if an error occurred while calling the atoi
+; Note: Many registers are preserved for the prevention of side effects.
 ;----------------------------------------------
 global str_2num:
 

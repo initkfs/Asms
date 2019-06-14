@@ -3,10 +3,18 @@
 ; initkfs, 2018
 ; procedure "str_end"
 ; Params: 
+; Strings must end with a null character
 ; RDI, memory address of string. 
 ; RSI, memory address of pattern
-; Returns: RAX, 1 if ends with pattern, or 0
+; Example:
+;	mov rdi, str ;"Hello",0
+;	mov rsi, pattern ;"o",0
+;	call str_end
+;
+; Returns: RAX, 1 if string ends with pattern, or 0
 ; Calls: str_length, str_search
+; Error: if there is an overflow of the string length
+; Note: Exit the procedure immediately if any non-system called function returns an error
 ; @TODO space char: 10, etc?
 ;----------------------------------------------
 global str_end

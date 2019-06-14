@@ -2,9 +2,16 @@
 ; initkfs, 2018
 ; procedure "str_copy"
 ; Params: 
+; Strings must end with a null character
 ; RDI, memory address of destination with the addition of null byte. 
 ; RSI, memory address of string.
+; Example:
+;	mov rdi, copyDest
+;	mov rsi, str
+;	call str_copy
+;
 ; Calls: str_length
+; Note: Exit the procedure immediately if any non-system called function returns an error
 ;----------------------------------------------
 global str_copy
 

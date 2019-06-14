@@ -6,6 +6,5 @@
 %include "lib/string/str_cmp.inc"
 %include "lib/string/str_copy.inc"
 %include "lib/string/str_repeat.inc"
-%include "lib/string/str_concat.inc"
 %include "lib/string/str_2num.inc"
 %include "lib/string/str_printf.inc"

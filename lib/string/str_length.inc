@@ -2,8 +2,14 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "str_length"
-; RDI: memory address of string.
-; Returns: RAX - size of ASCII string
+; Strings must end with a null character
+; RDI: memory address of string with null character.
+; Example:
+; 	mov rdi, source ;source: db "Hello", 10, 0
+;	call str_length ;RAX: 6
+;	
+; Returns: RAX - size of ASCII string with special characters except null character
+; Error: if there is an overflow of the string length
 ;----------------------------------------------
 global str_length
 

@@ -6,34 +6,45 @@
 ; RDI, memory address of string format
 ; RSI, target value 
 ; RDX, 1 is a float value
+; Example:
+;	mov rdi, resultFormat ; "RESULT=%f"
+;	lea rax, [rel num] ; dq 565.7, prevent PIE error
+;	mov rsi, [rax]
+;	mov rdx, 1 ; float number
+;	call str_printf ; RESULT=565.700000
+;
 ; Calls: extern printf
+; Error: if an error occurred while calling the system printf
+;
+; Note: 
+; Many registers are preserved for the prevention of side effects.
+;
+; https://stackoverflow.com/questions/6212665/why-is-eax-zeroed-before-a-call-to-printf/6212835#6212835
+; https://stackoverflow.com/questions/20594800/printf-float-in-nasm-assembly-64-bit
+; d or i	Signed decimal integer
+; u	Unsigned decimal integer
+; o	Unsigned octal
+; x	Unsigned hexadecimal integer,	7fa
+; X	Unsigned hexadecimal integer (uppercase),	7FA
+; f	Decimal floating point, lowercase,	392.65
+; F	Decimal floating point, uppercase,	392.65
+; e	Scientific notation (mantissa/exponent), lowercase,	3.9265e+2
+; E	Scientific notation (mantissa/exponent), uppercase,	3.9265E+2
+; g	Use the shortest representation: %e or %f,	392.65
+; G	Use the shortest representation: %E or %F,	392.65
+; a	Hexadecimal floating point, lowercase,	-0xc.90fep-2
+; A	Hexadecimal floating point, uppercase,	-0XC.90FEP-2
+; c	Character,	a
+; s	String of characters,	sample
+; p	Pointer address,	b8000000
+; n	Nothing printed.
+; %	A % followed by another % character will write a single % to the stream.	%
+; Length & Description
+; l argument is interpreted as a long int or unsigned long int for integer specifiers (i, d, o, u, x and X), and as a wide character or wide character string for specifiers c and s.
+; h argument is interpreted as a short int or unsigned short int (only applies to integer specifiers: i, d, o, u, x and X).
+; L argument is interpreted as a long double (only applies to floating point specifiers: e, E, f, g and G).
 ;----------------------------------------------
 global str_printf
-
-;https://stackoverflow.com/questions/6212665/why-is-eax-zeroed-before-a-call-to-printf/6212835#6212835
-;https://stackoverflow.com/questions/20594800/printf-float-in-nasm-assembly-64-bit
-;d or i	Signed decimal integer
-;u	Unsigned decimal integer
-;o	Unsigned octal
-;x	Unsigned hexadecimal integer,	7fa
-;X	Unsigned hexadecimal integer (uppercase),	7FA
-;f	Decimal floating point, lowercase,	392.65
-;F	Decimal floating point, uppercase,	392.65
-;e	Scientific notation (mantissa/exponent), lowercase,	3.9265e+2
-;E	Scientific notation (mantissa/exponent), uppercase,	3.9265E+2
-;g	Use the shortest representation: %e or %f,	392.65
-;G	Use the shortest representation: %E or %F,	392.65
-;a	Hexadecimal floating point, lowercase,	-0xc.90fep-2
-;A	Hexadecimal floating point, uppercase,	-0XC.90FEP-2
-;c	Character,	a
-;s	String of characters,	sample
-;p	Pointer address,	b8000000
-;n	Nothing printed.
-;%	A % followed by another % character will write a single % to the stream.	%
-;Length & Description
-;l argument is interpreted as a long int or unsigned long int for integer specifiers (i, d, o, u, x and X), and as a wide character or wide character string for specifiers c and s.
-;h argument is interpreted as a short int or unsigned short int (only applies to integer specifiers: i, d, o, u, x and X).
-;L argument is interpreted as a long double (only applies to floating point specifiers: e, E, f, g and G).
 
 extern	printf
 
@@ -63,8 +74,7 @@ str_printf:
 	movq xmm0, qword rsi
 	
 .callPrintf:
-	;TODO check error
-	call printf WRT ..plt
+	call printf WRT ..plt ;for PIE
 	test rax, rax
 	jl .errCallPrintfError
 	xor rdx, rdx

@@ -2,10 +2,17 @@
 ; initkfs, 2018
 ; procedure "str_start"
 ; Params: 
+; Strings must end with a null character
 ; RDI, memory address of string. 
 ; RSI, memory address of pattern.
-; Returns: RAX, 1 if starts with pattern, or 0
+; Example:
+;	mov rdi, str ;"Hello",0
+;	mov rsi, pattern ;"H",0
+;	call str_start
+;
+; Returns: RAX, 1 if string starts with pattern, or 0
 ; Calls: str_search
+; Note: Exit the procedure immediately if any non-system called function returns an error
 ;----------------------------------------------
 global str_start
 

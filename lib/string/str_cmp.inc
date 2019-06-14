@@ -2,10 +2,17 @@
 ; initkfs, 2018
 ; procedure "str_cmp"
 ; Params: 
-; RDI, memory address of first string. 
-; RSI, memory address second string, RSI
-; Returns: RAX - 1 if strings are equals. or 0
+; Strings must end with a null character
+; RDI, memory address of first string
+; RSI, memory address second string
+; Example:
+;	mov rdi, string1
+;	mov rsi, string2
+;	call str_cmp
+;
+; Returns: RAX - 1 if strings are equals. or 0. Special characters are also compared.
 ; Calls: str_length
+; Note: Exit the procedure immediately if any non-system called function returns an error
 ;----------------------------------------------
 global str_cmp
 
@@ -19,11 +26,11 @@ str_cmp:
 	test rdx, rdx
 	jne .end
 	
-	mov rcx, rax
+	mov rcx, rax ;set count for repe
 	
 	cld
 	
-	repe  cmpsb	
+	repe cmpsb	
 	jne .stringNotEquals ; do not use jecxz, last byte is lost
 	
 .stringEquals:
