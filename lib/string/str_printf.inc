@@ -17,7 +17,7 @@
 ; Error: if an error occurred while calling the system printf
 ;
 ; Note: 
-; Many registers are preserved for the prevention of side effects.
+; Many registers are preserved for the prevention of side effects
 ;
 ; https://stackoverflow.com/questions/6212665/why-is-eax-zeroed-before-a-call-to-printf/6212835#6212835
 ; https://stackoverflow.com/questions/20594800/printf-float-in-nasm-assembly-64-bit

@@ -4,7 +4,7 @@
 ; procedure "str_end"
 ; Params: 
 ; Strings must end with a null character
-; RDI, memory address of string. 
+; RDI, memory address of string
 ; RSI, memory address of pattern
 ; Example:
 ;	mov rdi, str ;"Hello",0

@@ -14,7 +14,7 @@
 ; Returns: RAX
 ; if (1num == 1num) return 0
 ; if (1num < 2num) return -1
-; if (2num > 1num) return 1
+; if (1num > 2num) return 1
 ; Error: if result is a not valid number (NaN) or a comparison error occurred
 ;----------------------------------------------
 global num_cmpfd
