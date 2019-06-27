@@ -6,44 +6,39 @@
 
 section .data
 file: dq __FILE__
-num1: dq 134
+num1: dq 2147483648
 
 section .text
 global main
 
 main:
 
-testNumAbs:
+testNumInt32Abs:
 
-	xor rdi, rdi
-	call num_abs
+	mov rdi, 2147483648 ; int32 max + 1
+	call num_int32_abs
 	test rdx, rdx
-	jne .fail
+	je .fail
 	
-	test rax, rax
-	jne .fail
+	mov rdi, -2147483649 ; int32min + 1
+	call num_int32_abs
+	test rdx, rdx
+	je .fail
 
 	mov rdi, [num1]
-	call num_abs
+	neg rdi
+	call num_int32_abs
 	test rdx, rdx
 	jne .fail
 	
-	cmp rax, [num1]
-	jne .fail
-	
-	mov r9, [num1]
-	neg r9
-	mov rdi, r9
-	call num_abs
-	test rdx, rdx
-	jne .fail
-	
-	cmp rax, [num1]
+	mov r8, [num1]
+	cmp r8, rax
 	jne .fail
 	
 	call testSuccess
 	
 .fail:
+	call assertNumeric
 	mov rdi, __LINE__
 	mov rsi, file
 	call printFailInfo

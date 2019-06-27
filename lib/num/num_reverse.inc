@@ -2,8 +2,14 @@
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "num_reverse"
-; RDI - number
-; Result in RAX
+; Params:
+; RDI, positive decimal number
+; Example:
+;	mov rdi, 134
+;	call num_reverse ;431 in RAX
+;
+; Returns: RAX
+; Error: if input number is not positive
 ;----------------------------------------------
 global num_reverse
 
@@ -19,7 +25,7 @@ num_reverse:
 	push r9
 	
 	test rdi, rdi
-	jl .errArgNumberIsNegative
+	jle .errArgNumberIsNotPositive
 	
 	xor r8, r8 ; r8 == reverse
 	mov rcx, rdi ; rcx == number
@@ -48,7 +54,7 @@ num_reverse:
 	xor rdx, rdx
 	jmp .end
 
-.errArgNumberIsNegative:
+.errArgNumberIsNotPositive:
 	mov rdx, 701
 	
 .end:
@@ -56,6 +62,3 @@ num_reverse:
 	pop r8
 	pop rcx
 	ret
-;----------------------------------------------
-;			procedure "num_reverse" end
-;----------------------------------------------

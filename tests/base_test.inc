@@ -4,14 +4,14 @@
 %include "lib/string/str.inc"
 
 section .data
-exitFormat: db "ERROR_CODE: %d", 10, 0
-lineFormat: db "LINE: %d", 10, 0
+exitFormat: db "ERROR_CODE: %ld", 10, 0
+lineFormat: db "LINE: %ld", 10, 0
 fileFormat: db "File: %s", 10, 0
 
-numFormat: db "number=%d", 10, 0
+numFormat: db "number=%ld", 10, 0
 strformat: db "string=%s", 10, 0
 
-actualNumFormat: db "Actual (RAX): %d, expected (R8): %d", 10, 0
+actualNumFormat: db "Actual (RAX): %ld, expected (R8): %ld", 10, 0
 
 section .data
 file1: dq __FILE__

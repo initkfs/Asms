@@ -1,13 +1,32 @@
+; errno=1200
 ;----------------------------------------------
 ; initkfs, 2018
 ; procedure "num_gcd"
-; Calculate Greatest Common Devisor based on Euclidean algorithm
-; RDI - first number, RSI - second number
-; Result in RAX
+; Calculate "Greatest Common Devisor" based on Euclidean algorithm
+; Params:
+; RDI, first positive decimal number
+; RSI, second positive decimal number
+; Example:
+;	;GCD(16, 40) = 8
+;	mov rdi, 16
+;	mov rsi, 40
+;	call num_gcd ;8 in RAX
+;
+; Returns: RAX
+; Error: if first number is not positive
+; Error: if second number is not positive
 ;----------------------------------------------
 global num_gcd
 
 num_gcd:
+
+	push rcx
+
+	test rdi, rdi
+	jle .errFirstNumberNotPositive
+	
+	test rsi, rsi
+	jle .errSecondNumberNotPositive
 
 	mov rax, rdi
     mov rcx, rsi
@@ -31,9 +50,15 @@ num_gcd:
     jne .while		; 
     
     xor rdx, rdx
+    jmp .end
+    
+.errFirstNumberNotPositive:
+	mov rdx, 1201
+	jmp .end
+
+.errSecondNumberNotPositive:
+	mov rdx, 1202
  
 .end:
+	pop rcx
 	ret
-;----------------------------------------------
-;			procedure "num_gcd" end
-;----------------------------------------------
