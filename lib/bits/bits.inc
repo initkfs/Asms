@@ -1,0 +1,5 @@
+%include "lib/bits/_bit_1shl_dec.inc"
+%include "lib/bits/bit_1shl.inc"
+%include "lib/bits/bit_set.inc"
+%include "lib/bits/bit_is_set.inc"
+%include "lib/bits/bit_unset.inc"
