@@ -26,13 +26,13 @@ _array_element_offset:
 
 	call array_count
 	test rdx, rdx
-	jl .end
+	jne .end
 	
 	mov rcx, rax ; array size in rcx
 	
 	call _array_size_specifier
 	test rdx, rdx
-	jl .end
+	jne .end
 	
 	imul rsi ; index * size
 	jo .errArrayElementCalculateOverflow
