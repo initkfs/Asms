@@ -42,7 +42,7 @@ num_gcd:
 ; a (rax) = larger number, b (rcx) = smaller number
 .while:
     xor rdx, rdx	; prevent error from div
-    div rcx			; rax - result, rcx - remainder
+    idiv rcx			; rax - result, rcx - remainder
     mov rax, rcx	; a = b
     mov rcx, rdx	; b = remainder
    

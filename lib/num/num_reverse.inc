@@ -34,7 +34,8 @@ num_reverse:
 	mov r9, 10 ; r9 == 10
 
 	mov rax, r8
-	mul r9
+	imul r9
+	jo .errIterationOverflowError
 	mov r8, rax
 	
 	mov rax, rcx
@@ -44,7 +45,7 @@ num_reverse:
 	
 	mov rax, rcx
 	xor rdx, rdx
-	div r9
+	idiv r9
 	mov rcx, rax
 	
 	test rcx, rcx
@@ -56,6 +57,10 @@ num_reverse:
 
 .errArgNumberIsNotPositive:
 	mov rdx, 701
+	jmp .end
+
+.errIterationOverflowError:
+	mov rdx, 702
 	
 .end:
 	pop r9

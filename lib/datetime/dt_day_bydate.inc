@@ -70,7 +70,8 @@ dt_day_bydate:
 .calculateG:
 	mov rax, r8
 	mov r10, 100
-	mul r10
+	imul r10
+	jo .error
 	sub r9, rax ; g == r9
 
 .setE:	
@@ -98,7 +99,7 @@ dt_day_bydate:
 	mov rax, r8
 	mov r12, 4
 	xor rdx, rdx
-	div r12
+	idiv r12
 	mov rax, rdx 
 
 .setForGregorian:
@@ -141,7 +142,7 @@ dt_day_bydate:
 	
 	mov rax, r13
 	mov r14, 7
-	div r14
+	idiv r14
 	mov rax, rdx
 	
 	xor rdx, rdx
