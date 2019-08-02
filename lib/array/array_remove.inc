@@ -1,17 +1,18 @@
 ;----------------------------------------------
 ; initkfs, 2018
-; procedure array_remove
-;
+; procedure "array_remove"
+; Remove element in an array by index
 ; Params: 
 ; RDI: array address, 
 ; RSI: array index, starts with 0
-;
 ; Returns: RAX, array element by index
 ;
 ; Calls: array_count, array_copy, _array_counter_offset
+; Note: Exit the procedure immediately if any non-system called function returns an error
 ;----------------------------------------------
 global array_remove
 
+;TODO save registers
 array_remove:
 
 	push rsi

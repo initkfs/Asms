@@ -1,14 +1,18 @@
 ;----------------------------------------------
 ; initkfs, 2018
-; procedure array_get
-;
+; procedure "array_get"
+; Get an element from array by index
 ; Params: 
-; RDI: array address, 
+; RDI: array address
 ; RSI: array index, starts with 0
-;
 ; Returns: RAX, array element by index
+; Example:
+;	mov rdi, dataArrayAddress
+;	mov rsi, 0 ; set element index
+;	call array_get ; result in RAX
 ;
-; Calls: _array_element_offset
+; Calls: _array_element_offset;
+; Note: Exit the procedure immediately if any non-system called function returns an error
 ;----------------------------------------------
 global array_get
 

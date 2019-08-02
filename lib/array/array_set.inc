@@ -1,14 +1,25 @@
 ; errno=1180
 ;----------------------------------------------
 ; initkfs, 2018
-; procedure array_set
-;
+; procedure "array_set"
+; Set an element in an array by index
 ; Params: 
-; RDI: array address, 
+; RDI: array address
 ; RSI: array index, starts with 0
-; RDX: new element
+; RDI: new element
+; Example:
+;	mov rdi, dataArrayAddress
+;	mov rsi, 0 ; set element index
+;	mov rdx, 12 ; put 12 in array
+;	call array_set
 ;
 ; Calls: array_count, _array_element_offset, _array_size_specifier, _array_counter_offset
+;
+; Error: if element index is less than 0
+; Error: if the element index is larger than the size of the array
+; Error: if the array is empty, but the element index is not 0
+;
+; Note: Exit the procedure immediately if any non-system called function returns an error
 ;----------------------------------------------
 global array_set
 
@@ -31,6 +42,8 @@ array_set:
 	jl .errArrayIndexLessZero
 	
 	call array_count
+	test rdx, rdx
+	jne .end
 	test rax, rax
 	je .addToEmptyArray
 	

@@ -1,4 +1,5 @@
 ; errno=500
+;----------------------------------------------
 ; array_sort
 ;  
 ; initkfs, 2018
@@ -31,7 +32,8 @@ array_sort:
 	jne .end
 	mov rcx, rax ; save array size
 	
-	mov r8, 1 ; r8, outer loop counter, i = 1
+	xor r8, r8
+	inc r8 ;r8, outer loop counter, i = 1
 .outerLoop:
 	
 	mov r9, r8 ; r9 - inner loop counter,  j = i
