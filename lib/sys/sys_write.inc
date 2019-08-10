@@ -1,55 +1,42 @@
 ; errno=200
+;----------------------------------------------
 ; initkfs, 2018
-; 
 ; Prints string to stdout
-; RDI: memory address of string
-; RSI: number of characters to print, or 0 for full string. Be careful with utf.
+; RDI: memory address of string. Null-byte is ingnored
+; RSI: number of characters to print. Be careful with utf.
 ;
 ; Example:
-; 	xor rsi, rsi
 ; 	mov rdi, source
+;	mov rsi, 4
 ; 	call sys_write 
 ;
-; Calls: str_length
 ; System calls: sys_write
-; Error: if string size in RSI is negative
-; Error: if string size in RSI is larger than the string
-; Error: if string length is zero, ex: string: db "", 0 will throw an error
-; Error: if an error occurred while calling the sys_write
-; Note: Exit the procedure immediately if any non-system called function returns an error
-; ---------------------
+; Macros used: push64wr, pop64wr
+; Error: if string size is not positive
+; Error: if an error occurred while calling the syscall
+;----------------------------------------------
 global sys_write:
 
 sys_write:
 
-	push r8
-	push rax
-
-	mov r8, rsi  ; save string size
-
-	test r8, r8
-	jl .errStringSizeNegative
+	push64wr
 	
-	call str_length
-	test rdx, rdx
-	jne .end
+	test rsi, rsi
+	jle .errStringSizeNotPositive
 	
-	test rax, rax
-	je .errStringSizeIsZero
+	;
+	; preparing registers for syscall
+	;
 	
-	cmp r8, rax
-	jg .errStringSizeGreater
+	mov rdx, rsi 	; string size
 	
-	test r8, r8
-	jg .print
+	xor rax, rax
+	inc rax			; mov rax, 1 ; sys_write call number
+		
+	mov rsi, rdi 	; const char *buf, memory address of string
 	
-	mov r8, rax
-	
-.print:
-	mov rdx, r8 ; string size
-	mov rax, 1 ; sys_write 
-	mov rsi, rdi ; const char *buf
-	mov rdi, 1 ; unsigned int fd; 1 - stdout
+	xor rdi, rdi
+	inc rdi			; mov rdi, 1 ; unsigned int fd; 1 - stdout
 	
 	syscall
 	test rax, rax
@@ -58,22 +45,13 @@ sys_write:
 	xor rdx, rdx
 	jmp .end
 	
-.errStringSizeNegative:
+.errStringSizeNotPositive:
 	mov rdx, 201
-	jmp .end
-
-.errStringSizeGreater:
-	mov rdx, 202
-	jmp .end
-
-.errStringSizeIsZero:
-	mov rdx, 203
 	jmp .end
 	
 .syscallSysWriteError:
-	mov rdx, 204
+	mov rdx, 202
 
 .end:
-	pop rax
-	pop r8
+	pop64wr
 	ret

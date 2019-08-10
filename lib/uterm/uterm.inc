@@ -1,0 +1,6 @@
+%include "lib/uterm/uterm_width.inc"
+%include "lib/uterm/uterm_format.inc"
+%include "lib/uterm/uterm_format_end.inc"
+%include "lib/uterm/uterm_format_success.inc"
+%include "lib/uterm/uterm_format_warning.inc"
+%include "lib/uterm/uterm_format_error.inc"

@@ -1,0 +1,6 @@
+%include "lib/sys/sys_exit.inc"
+%include "lib/sys/sys_readin.inc"
+%include "lib/sys/sys_write.inc"
+%include "lib/sys/sys_writeb.inc"
+%include "lib/sys/sys_writebs.inc"
+%include "lib/sys/sys_writestr.inc"

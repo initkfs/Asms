@@ -1,5 +1,6 @@
 ; initkfs, 2018
 ; ---------------------
+%include "lib/com/com.inc"
 %include "lib/sys/sys_exit.inc"
 %include "lib/string/str.inc"
 
