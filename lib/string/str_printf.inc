@@ -14,6 +14,7 @@
 ;	call str_printf ; RESULT=565.700000
 ;
 ; Calls: extern printf
+; Macros used: push64wr, pop64wr
 ; Error: if an error occurred while calling the system printf
 ;
 ; Note: 
@@ -49,19 +50,8 @@ global str_printf
 extern	printf
 
 str_printf:
-	;push rdx - error code
-	push rax
-	push rcx
-	push rsi
-	push rdi
-	push r8
-	push r9
-	push r10
-	push r11
-	push r12
-	push r13
-	push r14
-	push r15
+	
+	push64wr
 
 	cmp rdx, 1
 	je .preparePrintFloat
@@ -84,16 +74,5 @@ str_printf:
 	mov rdx, 1001
 
 .end:
-	pop r15
-	pop r14
-	pop r13
-	pop r12
-	pop r11
-	pop r10
-	pop r9
-	pop r8
-	pop rdi    
-	pop rsi        
-	pop rcx
-	pop rax
+	pop64wr
 	ret

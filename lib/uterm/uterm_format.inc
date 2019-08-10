@@ -21,11 +21,6 @@ uterm_format:
 	push rdi
 	push r8
 	
-	push rbp
-	mov rbp, rsp
-	sub rsp, 8
-	and rsp, -16
-	
 	mov r8, rdi 		; save attributes
 	
 	;\033[0m
@@ -53,13 +48,7 @@ uterm_format:
 	xor rdx, rdx
 	
 .end:
-	mov rsp, rbp
-	pop rbp
-	
 	pop r8
 	pop rdi
 	pop rsi
 	ret
-
-
-
