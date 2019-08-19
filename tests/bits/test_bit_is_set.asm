@@ -12,15 +12,6 @@ main:
 
 testBitsIsSet:
 
-	mov rsi, 1
-	
-	;test incorrect values in RDI
-	
-	xor rdi, rdi
-	call bit_is_set
-	test rdx, rdx
-	je .fail
-	
 	mov rdi, 1
 	
 	;test incorrect values in RSI

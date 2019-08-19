@@ -9,6 +9,8 @@ global uterm_format_warning
 
 uterm_format_warning:
 
+	push rdi
+	
 	; red on white: "[43m" 
 	mov rdi, '43'
 	call uterm_format
@@ -18,6 +20,7 @@ uterm_format_warning:
 	xor rdx, rdx
 	
 .end:
+	pop rdi
 	ret
 
 

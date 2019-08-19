@@ -1,7 +1,7 @@
 ; errno=1300
 ;----------------------------------------------
 ; initkfs, 2018
-; Procedure "bit_is_set". Check bit is set in the unsigned number
+; Procedure "bit_is_set". Check bit is set in the unsigned number. Bit count starts at 1
 ; Params: 
 ; RDI, unsigned number
 ; RSI, bit position, 1 <= n <= 64
@@ -11,7 +11,6 @@
 ;	call bit_is_set ; RAX: 1
 ;
 ; Returns: RAX, 1 if bit is set or 0 otherwise
-; Error: if input number is not positive
 ; Error: if bit position out of bounds
 ; Calls: bit_1shl
 ; Note: Exit the procedure immediately if any non-system called function returns an error
@@ -21,9 +20,6 @@ global bit_is_set
 
 bit_is_set:
 	push r8
-
-	test rdi, rdi
-	je .errValueIsNotPositive
 	
 	cmp rsi, 1
 	jl .errBitNumberIsTooSmall
@@ -52,10 +48,6 @@ bit_is_set:
 .bitNotSet:
 	xor rax, rax
 	xor rdx, rdx
-	jmp .end
-
-.errValueIsNotPositive:
-	mov rdx, 1301
 	jmp .end
 	
 .errBitNumberIsTooSmall:

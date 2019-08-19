@@ -11,7 +11,6 @@
 ;	call bit_set ; RAX: 129 (10000001)
 ;
 ; Returns: RAX, result number
-; Error: if input number is not positive
 ; Error: if bit position out of bounds
 ; Calls: _bit_1shl_dec
 ; Note: Exit the procedure immediately if any non-system called function returns an error
@@ -21,10 +20,7 @@ global bit_set
 
 bit_set:
 	push r8
-	
-	test rdi, rdi
-	je .errValueIsNotPositive ; unsigned value, check zero only
-	
+
 	cmp rsi, 1
 	jl .errBitNumberIsTooSmall
 	
@@ -43,10 +39,6 @@ bit_set:
 	or rax, rdi
 	
 	xor rdx, rdx
-	jmp .end
-
-.errValueIsNotPositive:
-	mov rdx, 1351
 	jmp .end
 	
 .errBitNumberIsTooSmall:

@@ -8,6 +8,8 @@
 global uterm_format_end
 
 uterm_format_end:
+
+	push rdi
 	
 	;\e[0m
 	mov rdi, '0'
@@ -18,6 +20,7 @@ uterm_format_end:
 	xor rdx, rdx
 	
 .end:
+	pop rdi
 	ret
 
 

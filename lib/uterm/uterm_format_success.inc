@@ -9,6 +9,8 @@ global uterm_format_success
 
 uterm_format_success:
 
+	push rdi
+
 	; green on white: "[42m" 
 	mov rdi, '42'
 	call uterm_format
@@ -18,6 +20,7 @@ uterm_format_success:
 	xor rdx, rdx
 	
 .end:
+	pop rdi
 	ret
 
 

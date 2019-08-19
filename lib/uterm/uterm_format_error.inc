@@ -9,6 +9,8 @@ global uterm_format_error
 
 uterm_format_error:
 
+	push rdi
+
 	; red on white: "[41m" 
 	mov rdi, '41'
 	call uterm_format
@@ -18,6 +20,7 @@ uterm_format_error:
 	xor rdx, rdx
 	
 .end:
+	pop rdi
 	ret
 
 

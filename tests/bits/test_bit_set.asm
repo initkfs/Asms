@@ -12,21 +12,8 @@ main:
 
 testBitsSet:
 
-	mov rsi, 1
-
-	;test incorrect values in RDI
-	;mov rdi, -1
-	;call bit_set
-	;test rdx, rdx
-	;je .fail
-	
-	xor rdi, rdi
-	call bit_set
-	test rdx, rdx
-	je .fail
-	
 	mov rdi, 1
-	
+
 	;test incorrect values in RSI
 	xor rsi, rsi
 	call bit_set
