@@ -4,3 +4,4 @@
 %include "lib/sys/sys_writeb.inc"
 %include "lib/sys/sys_writebs.inc"
 %include "lib/sys/sys_writestr.inc"
+%include "lib/sys/sys_writeln.inc"
