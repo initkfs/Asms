@@ -1,7 +1,7 @@
 ;----------------------------------------------
 ; initkfs, 2019
 ;
-; Prints the sides of the box with a string in the middle. If the string cannot fit exactly in the middle, then the left indent will be increased. 
+; Prints the sides of the box with a string in the middle. If the string cannot fit exactly in the middle, then the left indent will be increased. If the string is larger than the terminal width, then it will be truncated
 ; See: https://en.wikipedia.org/wiki/Box-drawing_character
 ; Params:
 ;	RDI, string memory address
@@ -25,7 +25,7 @@ draw_box_sidestr:
 	call str_length
 	test rdx, rdx
 	jnz .end
-	
+
 	mov r9, rax			; save string length
 
 	call uterm_width
@@ -35,6 +35,12 @@ draw_box_sidestr:
 	mov r10, rax		; save terminal width
 	dec r10
 	dec r10				; remove two characters from the edges of box
+
+	cmp r9, r10			; compare string length and terminal width
+	jl .calculateStringIndents
+
+.cutString:
+	mov r9, r10			; set string length as terminal width without edges
 
 .calculateStringIndents:
 	mov rax, r10		; terminal width without edges
@@ -60,7 +66,12 @@ draw_box_sidestr:
 	test rdx, rdx
 	jnz .end
 
+	test rax, rax
+	jz .printMainString
+
 	mov rcx, rax
+	test rcx, rcx
+	jle .printMainString
 	mov rdi, ' '
 .printLeftIndent:
 	call sys_writeb
@@ -72,12 +83,15 @@ draw_box_sidestr:
 	xor rsi, rsi
 .printMainString:
 	mov rdi, r8
+	mov rsi, r9
 	call sys_writestr
 	test rdx, rdx
 	jnz .end
 
 	mov rdi, ' '
 	mov rcx, r12
+	test rcx, rcx
+	jle .printRightCorner
 .printRightIndent:
 	call sys_writeb
 	test rdx, rdx

@@ -74,6 +74,12 @@ global debug_print_reg
 	call str_printf
 	test rdx, rdx
 	jne %%end
+
+	mov dword [rbp - %%formatAddr], 'R8: '
+	mov rsi, r8
+	call str_printf
+	test rdx, rdx
+	jne %%end
 	
 	mov dword [rbp - %%formatAddr], 'R9: '
 	mov rsi, r9
