@@ -9,6 +9,8 @@ global sys_writeln:
 
 sys_writeln:
 
+	push rdi
+
 	mov rdi, 13			; \r
 	call sys_writeb
 	test rdx, rdx
@@ -22,4 +24,5 @@ sys_writeln:
 	xor rdx, rdx
 
 .end:
+	pop rdi
 	ret

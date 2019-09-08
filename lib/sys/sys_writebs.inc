@@ -20,6 +20,8 @@ global sys_writebs:
 
 sys_writebs:
 
+	push rax
+	push rcx
 	push rsi 
 	push rdi
 	push r8
@@ -75,4 +77,6 @@ sys_writebs:
 	pop r8
 	pop rdi
 	pop rsi
+	pop rcx
+	pop rax
 	ret
