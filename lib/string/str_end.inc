@@ -21,6 +21,8 @@ global str_end
 
 str_end:
 	
+	push rdi
+	push rsi
 	push r8
 	push rcx
 	
@@ -65,7 +67,8 @@ str_end:
 	jmp .end
 
 .patternFound:
-	mov rax, 1
+	xor rax, rax
+	inc rax		; mov rax, 1
 	xor rdx, rdx
 	jmp .end
 	
@@ -76,6 +79,8 @@ str_end:
 .end:
 	pop rcx
 	pop r8
+	pop rdi
+	pop rsi
 	ret
 ;----------------------------------------------
 ;			procedure "str_end" end
