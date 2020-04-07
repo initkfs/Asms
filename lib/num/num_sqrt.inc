@@ -31,7 +31,7 @@ num_sqrt:
 	push rdi
     fild qword [rsp]
     fsqrt
-    fst qword [rsp] ;or fist\fisttp for truncation result
+    fstp qword [rsp] ;or fist\fisttp for truncation result
     mov rax, [rsp]  
     pop rdi
     
