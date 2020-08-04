@@ -14,7 +14,6 @@ global str_2num:
 extern atoi
 
 str_2num:
-	push rax
 	push rcx
 	push rsi
 	push rdi
@@ -48,5 +47,4 @@ str_2num:
 	pop rdi    
 	pop rsi        
 	pop rcx
-	pop rax
 	ret
