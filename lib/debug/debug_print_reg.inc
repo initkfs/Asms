@@ -55,7 +55,7 @@ global debug_print_reg
 	mov rsi, [rbp - 26]
 	call str_printf
 	test rdx, rdx
-	jne .end
+	jne %%end
 	
 	mov dword [rbp - %%formatAddr], 'RDX:'
 	mov rsi, [rbp - 18]
