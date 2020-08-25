@@ -12,7 +12,7 @@
 ;
 ; Returns: RAX - 1 if strings are equals, or 0. Special characters are also compared
 ; Calls: str_length
-; Note: Exit the procedure immediately if any non-system called function returns an error
+; Note: Procedure sets comparison flags. Exit the procedure immediately if any non-system called function returns an error
 ;----------------------------------------------
 global str_cmp
 
@@ -44,6 +44,9 @@ str_cmp:
 	xor rdx, rdx
 	
 .end:
+
+	cmp rax, 1
+
 	pop rsi
 	pop rdi
 	pop rcx
