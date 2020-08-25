@@ -6,7 +6,7 @@
 ; Params: 
 ; RDI: array address
 ; RSI: array index, starts with 0
-; RDI: new element
+; RDX: new element
 ; Example:
 ;	mov rdi, dataArrayAddress
 ;	mov rsi, 0 ; set element index
