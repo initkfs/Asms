@@ -137,7 +137,7 @@ calculateIndentForPrintImage:
 
 	mov rsi, 2 ; calculate borders
 	xor rdx, rdx
-	div rsi
+	idiv rsi
 
 	mov r14, rax ; save indent to register
 
@@ -256,7 +256,7 @@ calculateMessageIndex:
 	xor rdx, rdx
 	mov rax, rdi
 	mov rcx, rsi
-	div rcx
+	idiv rcx
 	mov rax, rdx
 	xor rdx, rdx
 	pop rcx
