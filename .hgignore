@@ -1,7 +1,7 @@
 ^build
 ^build_qemu.sh
 ^build.sh
-^app\.[asm|list]
+^app\.[list]
 ^app\.[dis|ds]
 ^gdb.list
 ^tests/build/
