@@ -22,8 +22,7 @@ global uterm_width
 
 uterm_width:
 
-	push rdi
-	push rsi
+	push64wrmin
 
 	enter 8, 0
 
@@ -45,8 +44,7 @@ uterm_width:
 	
 .end:
 	leave
-	pop rsi
-	pop rdi
+	pop64wrmin
 	ret
 ;----------------------------------------------
 ;			procedure "uterm_width" end
